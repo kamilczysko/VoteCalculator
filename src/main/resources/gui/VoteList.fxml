@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.VBox?>
 
 
-<VBox xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.kamil.VoteCalculator.gui.VoteList">
+<VBox fx:id="mainBox" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.kamil.VoteCalculator.gui.VoteList">
    <children>
       <ScrollPane prefHeight="381.0" prefWidth="360.0">
          <content>
@@ -20,6 +20,6 @@
             </VBox>
          </content>
       </ScrollPane>
-      <Button mnemonicParsing="false" onAction="#vote" text="Vote" />
+      <Button fx:id="voteButton" mnemonicParsing="false" onAction="#vote" text="Vote" />
    </children>
 </VBox>

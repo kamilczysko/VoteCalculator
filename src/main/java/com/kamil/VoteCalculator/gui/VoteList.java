@@ -6,6 +6,8 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
@@ -28,6 +30,14 @@ public class VoteList {
     @FXML
     VBox voteBox;
 
+    @FXML
+    Button voteButton;
+
+    @FXML
+    VBox mainBox;
+
+    List<Node> allNodes = new ArrayList<>();
+
 
     private List<Candidate> voted = new ArrayList<Candidate>();
 
@@ -36,17 +46,18 @@ public class VoteList {
         MultiValueMap<String, Candidate> allCandidates = candidateService.getAllCandidatesToMap();
         Set<String> longs = allCandidates.keySet();
 
-        for(String key : longs) {
+        for (String key : longs) {
             Label partyNameLabel = new Label(key + ":");
-            partyNameLabel.setFont(Font.font("Amble CN", FontWeight.LIGHT, 18));
-            partyNameLabel.setPadding(new Insets(0,0,2,0));
+            partyNameLabel.setFont(Font.font("Amble CN", FontWeight.LIGHT, 16));
+            partyNameLabel.setPadding(new Insets(0, 0, 2, 0));
             voteBox.getChildren().add(partyNameLabel);
+            allNodes.add(partyNameLabel);
 
             List<Candidate> candidates = allCandidates.get(key);
-            for(Candidate c : candidates){
+            for (Candidate c : candidates) {
                 CheckBox candidateBox = new CheckBox();
                 candidateBox.setText(c.getName());
-                candidateBox.setFont(Font.font("Amble CN", FontWeight.LIGHT, 16));
+                candidateBox.setFont(Font.font("Amble CN", FontWeight.LIGHT, 12));
                 candidateBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
@@ -58,6 +69,7 @@ public class VoteList {
                     }
                 });
 
+                allNodes.add(candidateBox);
                 voteBox.getChildren().add(candidateBox);
             }
         }
@@ -69,5 +81,7 @@ public class VoteList {
         for (Candidate c : voted) {
             candidateService.vote(c);
         }
+        voted.clear();
+        voteBox.getChildren().removeAll(allNodes);
     }
 }
