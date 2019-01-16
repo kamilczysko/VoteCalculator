@@ -21,9 +21,9 @@ public class Disallowed {
         this.publicationDate = publicationDate;
     }
 
-    public boolean isDisallowed(String pesel){
-        for(Person p : getPerson()){
-            if(p.getPesel().equals(pesel))
+    public boolean isDisallowed(String pesel) {
+        for (Person p : getPerson()) {
+            if (p.getPesel().equals(pesel))
                 return true;
         }
         return false;
