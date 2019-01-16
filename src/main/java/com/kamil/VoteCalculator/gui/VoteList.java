@@ -1,76 +1,73 @@
 package com.kamil.VoteCalculator.gui;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.dataformat.xml.JacksonXmlModule;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import com.kamil.VoteCalculator.model.candidate.Candidates;
-import com.kamil.VoteCalculator.model.Disallowed;
-import com.kamil.VoteCalculator.model.Person;
+import com.kamil.VoteCalculator.model.candidate.Candidate;
+import com.kamil.VoteCalculator.model.candidate.CandidateService;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.fxml.FXML;
+import javafx.geometry.Insets;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.*;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.util.MultiValueMap;
 
-import java.io.IOException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 @Component
 public class VoteList {
 
     @Autowired
-    RestTemplate restTemplate;
+    CandidateService candidateService;
+
+    @FXML
+    VBox voteBox;
+
+
+    private List<Candidate> voted = new ArrayList<Candidate>();
 
     public void initialize() {
-    }
 
-//    private void getVoteListFromServer() throws IOException {
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.add("Accept", MediaType.APPLICATION_XML_VALUE);
-//        HttpEntity<String> entity = new HttpEntity<>(headers);
-//
-//        ResponseEntity<String> response = restTemplate.exchange("http://webtask.future-processing.com:8069/candidates", HttpMethod.GET, entity, String.class);
-//
-//        Pattern p = Pattern.compile("(" + Pattern.quote("<candidates>") + "(.*?)" + Pattern.quote("</candidates>") + ")");
-//        Matcher m = p.matcher(response.toString());
-//        String result = "";
-//        while (m.find())
-//            result = m.group(1);
-//
-//        JacksonXmlModule module = new JacksonXmlModule();
-//        module.setDefaultUseWrapper(false);
-//
-//        XmlMapper mapper = new XmlMapper(module);
-//        mapper.enable(DeserializationFeature.USE_LONG_FOR_INTS);
-//        mapper.configure(JsonGenerator.Feature.WRITE_NUMBERS_AS_STRINGS, true);
-//        Candidates candidates = mapper.readValue(result, Candidates.class);
-//    }
+        MultiValueMap<String, Candidate> allCandidates = candidateService.getAllCandidatesToMap();
+        Set<String> longs = allCandidates.keySet();
 
-    public void getDisallowed() throws IOException {
+        for(String key : longs) {
+            Label partyNameLabel = new Label(key + ":");
+            partyNameLabel.setFont(Font.font("Amble CN", FontWeight.LIGHT, 18));
+            partyNameLabel.setPadding(new Insets(0,0,2,0));
+            voteBox.getChildren().add(partyNameLabel);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Accept", MediaType.APPLICATION_XML_VALUE);
-        HttpEntity<String> entity = new HttpEntity<>(headers);
+            List<Candidate> candidates = allCandidates.get(key);
+            for(Candidate c : candidates){
+                CheckBox candidateBox = new CheckBox();
+                candidateBox.setText(c.getName());
+                candidateBox.setFont(Font.font("Amble CN", FontWeight.LIGHT, 16));
+                candidateBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                        if (newValue)
+                            voted.add(c);
+                        else
+                            voted.remove(c);
+                        System.out.println(voted);
+                    }
+                });
 
-        ResponseEntity<String> response = restTemplate.exchange("http://webtask.future-processing.com:8069/blocked", HttpMethod.GET, entity, String.class);
-
-        Pattern p = Pattern.compile("(" + Pattern.quote("<disallowed>") + "(.*?)" + Pattern.quote("</disallowed>") + ")");
-        Matcher m = p.matcher(response.toString());
-        String result = "";
-        while (m.find())
-            result = m.group(1);
-
-        JacksonXmlModule module = new JacksonXmlModule();
-        module.setDefaultUseWrapper(false);
-
-        XmlMapper mapper = new XmlMapper(module);
-        mapper.enable(DeserializationFeature.USE_LONG_FOR_INTS);
-        mapper.configure(JsonGenerator.Feature.WRITE_NUMBERS_AS_STRINGS, true);
-        Disallowed disallowed = mapper.readValue(result, Disallowed.class);
-        for (Person per : disallowed.getPerson()) {
-            System.out.println(per);
+                voteBox.getChildren().add(candidateBox);
+            }
         }
     }
 
+    @FXML
+    private void vote() {
+        System.out.println("VOTE!!!");
+        for (Candidate c : voted) {
+            candidateService.vote(c);
+        }
+    }
 }

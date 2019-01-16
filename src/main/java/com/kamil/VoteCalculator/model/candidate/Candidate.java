@@ -20,6 +20,9 @@ public class Candidate {
     @OneToOne
     Party party = new Party();
 
+    @JacksonXmlProperty(isAttribute = false)
+    int votes = 0;
+
     public long getId() {
         return id;
     }
@@ -40,7 +43,7 @@ public class Candidate {
         return party;
     }
 
-    public String getPartyName(){
+    public String getPartyName() {
         return party.getParty();
     }
 
@@ -52,8 +55,20 @@ public class Candidate {
         this.party = party;
     }
 
+    public int getVotes() {
+        return votes;
+    }
+
+    public void setVotes(int votes) {
+        this.votes = votes;
+    }
+
+    public void increaseVote() {
+        votes++;
+    }
+
     @Override
     public String toString() {
-        return id+" - "+getName()+" - "+getParty();
+        return id + " - " + getName() + " - " + getParty();
     }
 }

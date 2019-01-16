@@ -47,7 +47,7 @@ public class VoteCalculatorApplication extends Application implements CommandLin
     public void init() throws Exception {
 
         contet = SpringApplication.run(VoteCalculatorApplication.class);
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/MainWindow.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/VoteList.fxml"));
         loader.setControllerFactory(contet::getBean);
         mainWindowController = loader.getController();
         root = loader.load();
@@ -152,6 +152,5 @@ public class VoteCalculatorApplication extends Application implements CommandLin
             System.out.println(per);
         }
     }
-
 }
 
