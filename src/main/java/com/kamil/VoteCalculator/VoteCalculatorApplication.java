@@ -47,7 +47,7 @@ public class VoteCalculatorApplication extends Application implements CommandLin
     public void init() throws Exception {
 
         contet = SpringApplication.run(VoteCalculatorApplication.class);
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/VoteList.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/LoginWindow.fxml"));
         loader.setControllerFactory(contet::getBean);
         mainWindowController = loader.getController();
         root = loader.load();
@@ -74,7 +74,6 @@ public class VoteCalculatorApplication extends Application implements CommandLin
     EntityManager entityManager;
     @Autowired
     PartyService partyService;
-
 
     @Override
     public void run(String... args) throws Exception {
@@ -127,30 +126,5 @@ public class VoteCalculatorApplication extends Application implements CommandLin
         return candidates;
     }
 
-    public void getDisallowed() throws IOException {
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Accept", MediaType.APPLICATION_XML_VALUE);
-        HttpEntity<String> entity = new HttpEntity<>(headers);
-
-        ResponseEntity<String> response = restTemplate.exchange("http://webtask.future-processing.com:8069/blocked", HttpMethod.GET, entity, String.class);
-
-        Pattern p = Pattern.compile("(" + Pattern.quote("<disallowed>") + "(.*?)" + Pattern.quote("</disallowed>") + ")");
-        Matcher m = p.matcher(response.toString());
-        String result = "";
-        while (m.find())
-            result = m.group(1);
-
-        JacksonXmlModule module = new JacksonXmlModule();
-        module.setDefaultUseWrapper(false);
-
-        XmlMapper mapper = new XmlMapper(module);
-        mapper.enable(DeserializationFeature.USE_LONG_FOR_INTS);
-        mapper.configure(JsonGenerator.Feature.WRITE_NUMBERS_AS_STRINGS, true);
-        Disallowed disallowed = mapper.readValue(result, Disallowed.class);
-        for (Person per : disallowed.getPerson()) {
-            System.out.println(per);
-        }
-    }
 }
 

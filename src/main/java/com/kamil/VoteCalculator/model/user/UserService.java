@@ -14,4 +14,8 @@ public class UserService {
         return userRepo.findUserByPesel(pesel);
     }
 
+    public void registerNewUser(){
+
+    }
+
 }
