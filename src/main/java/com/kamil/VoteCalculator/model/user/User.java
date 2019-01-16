@@ -20,6 +20,7 @@ public class User {
     String password;
     @OneToOne
     Roles roles;
+    boolean blocked = false;
 
     public long getId() {
         return id;
@@ -67,6 +68,14 @@ public class User {
 
     public void setRoles(Roles roles) {
         this.roles = roles;
+    }
+
+    public boolean isBlocked() {
+        return blocked;
+    }
+
+    public void setBlocked(boolean blocked) {
+        this.blocked = blocked;
     }
 }
 

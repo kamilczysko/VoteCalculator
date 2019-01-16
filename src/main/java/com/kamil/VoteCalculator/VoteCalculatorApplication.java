@@ -12,6 +12,8 @@ import com.kamil.VoteCalculator.model.candidate.CandidateService;
 import com.kamil.VoteCalculator.model.candidate.Candidates;
 import com.kamil.VoteCalculator.model.party.Party;
 import com.kamil.VoteCalculator.model.party.PartyService;
+import com.kamil.VoteCalculator.model.role.Roles;
+import com.kamil.VoteCalculator.model.role.RolesService;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -74,10 +76,19 @@ public class VoteCalculatorApplication extends Application implements CommandLin
     EntityManager entityManager;
     @Autowired
     PartyService partyService;
+    @Autowired
+    RolesService rolesService;
 
     @Override
     public void run(String... args) throws Exception {
         initCandidates();
+
+        Roles unvoted  = new Roles();
+        unvoted.setUserRole("unvoted");
+        Roles voted  = new Roles();
+        voted.setUserRole("voted");
+        List<Roles> roles = rolesService.saveRoles(Arrays.asList(voted, unvoted));
+
     }
 
     private void initCandidates() throws IOException {

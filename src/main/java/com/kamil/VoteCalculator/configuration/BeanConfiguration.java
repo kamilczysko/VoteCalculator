@@ -54,6 +54,7 @@ public class BeanConfiguration {
         mapper.enable(DeserializationFeature.USE_LONG_FOR_INTS);
         mapper.configure(JsonGenerator.Feature.WRITE_NUMBERS_AS_STRINGS, true);
         Disallowed disallowed = mapper.readValue(result, Disallowed.class);
+
         return disallowed;
     }
 }

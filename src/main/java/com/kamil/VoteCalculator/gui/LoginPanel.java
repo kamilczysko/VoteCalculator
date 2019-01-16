@@ -17,6 +17,7 @@ public class LoginPanel {
     @FXML
     private void login(){
         System.out.println(passwordField.getText()+ " - "+peselField.getText());
+        
     }
 
 
