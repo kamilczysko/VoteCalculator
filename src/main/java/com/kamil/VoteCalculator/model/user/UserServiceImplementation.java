@@ -20,17 +20,14 @@ public class UserServiceImplementation implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String pesel) throws UsernameNotFoundException {
         User user = userService.getUserByPesel(pesel);
-
-        if(user == null)
+        if (user == null)
             return null;
         Set<GrantedAuthority> grantedAuthorities = new HashSet<GrantedAuthority>();
 
-        grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_" + user.getRoles()));
+        grantedAuthorities.add(new SimpleGrantedAuthority(user.getRoles().getUserRole()));
 
         org.springframework.security.core.userdetails.User userToLogin = new org.springframework.security.core.userdetails.User(
-                user.id + "#"+user.firstName+" "+user.secondName, user.getPassword(), true, true, true, true, grantedAuthorities);
-
-//		httpSession.setAttribute("CURRENT_USER", user);
+                user.id + "#" + user.firstName + " " + user.secondName, user.getPassword(), true, true, true, true, grantedAuthorities);
 
         return userToLogin;
     }

@@ -1,5 +1,6 @@
 package com.kamil.VoteCalculator.gui;
 
+import com.google.common.hash.Hashing;
 import com.kamil.VoteCalculator.model.Disallowed;
 import com.kamil.VoteCalculator.model.role.Roles;
 import com.kamil.VoteCalculator.model.role.RolesService;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -70,11 +72,16 @@ public class RegisterPanel {
     }
 
     private void registerUser() {
+
+        String peselHash = Hashing.sha256()
+                .hashString(peselField.getText(), StandardCharsets.UTF_8)
+                .toString();
+
         User user = new User();
         user.setFirstName(firstNameField.getText());
         user.setSecondName(secondNameField.getText());
         user.setPassword(passwordEncoder.encode(passwordField.getText()));
-        user.setPesel(passwordEncoder.encode(peselField.getText()));
+        user.setPesel(peselHash);
         user.setRoles(roles.get("unvoted"));
 
         userService.registerNewUser(user);
