@@ -39,7 +39,7 @@ public class CandidateService {
 
     @Secured("ROLE_unvoted")
     public void vote(Candidate candidate, boolean badVote) {
-        candidate.increaseVote(badVote);
+        candidate.increaseVote();
         candidateRepository.save(candidate);
     }
 

@@ -1,6 +1,7 @@
 package com.kamil.VoteCalculator.model.user;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -12,4 +13,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Override
     Optional<User> findById(Long aLong);
+
+    @Query(nativeQuery = true, value = "SELECT COUNT(*) FROM user WHERE bad_vote is true")
+    int getBadVotes();
 }

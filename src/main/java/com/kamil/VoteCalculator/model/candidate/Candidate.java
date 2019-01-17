@@ -23,9 +23,6 @@ public class Candidate {
     @JacksonXmlProperty(isAttribute = false)
     int votes = 0;
 
-    @JacksonXmlProperty(isAttribute = false)
-    int badVotes = 0;
-
     public long getId() {
         return id;
     }
@@ -66,19 +63,8 @@ public class Candidate {
         this.votes = votes;
     }
 
-    public void increaseVote(boolean bad) {
-        if (!bad)
-            votes++;
-        else
-            badVotes++;
-    }
-
-    public int getBadVotes() {
-        return badVotes;
-    }
-
-    public void setBadVotes(int badVotes) {
-        this.badVotes = badVotes;
+    public void increaseVote() {
+        votes++;
     }
 
     @Override

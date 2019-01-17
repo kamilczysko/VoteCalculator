@@ -22,6 +22,8 @@ public class User {
     Roles roles;
     boolean blocked = false;
 
+    boolean badVote = false;
+
     public long getId() {
         return id;
     }
@@ -76,6 +78,14 @@ public class User {
 
     public void setBlocked(boolean blocked) {
         this.blocked = blocked;
+    }
+
+    public boolean isBadVote() {
+        return badVote;
+    }
+
+    public void setBadVote(boolean badVote) {
+        this.badVote = badVote;
     }
 }
 

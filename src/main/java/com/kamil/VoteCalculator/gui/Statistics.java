@@ -36,10 +36,10 @@ public class Statistics {
 
     @FXML
     private void logout() {
-        getStatistics();
-//        Scene loginWindow = context.getBean("loadLoginWindow", Scene.class);
-//        VoteCalculatorApplication.stage.setScene(loginWindow);
-//        SecurityContextHolder.clearContext();
+//        getStatistics();
+        Scene loginWindow = context.getBean("loadLoginWindow", Scene.class);
+        VoteCalculatorApplication.stage.setScene(loginWindow);
+        SecurityContextHolder.clearContext();
     }
 
     @FXML

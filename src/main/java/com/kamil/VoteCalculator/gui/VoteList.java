@@ -105,14 +105,15 @@ public class VoteList {
 
     @FXML
     private void vote() {
-        if (alert()) {
+        boolean badVote = voted.size() != 1;
+        if (alert(badVote)) {
             try {
                 for (Candidate c : voted) {
                     candidateService.vote(c, voted.size() > 1);
                 }
                 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
                 long currentPrincipalName = Long.parseLong(authentication.getName());
-                userService.voted(currentPrincipalName);
+                userService.voted(currentPrincipalName, badVote);
                 voted.clear();
 
                 Scene voteScene = context.getBean("loadStatisticsWindow", Scene.class);
@@ -126,11 +127,14 @@ public class VoteList {
         }
     }
 
-    private boolean alert() {
+    private boolean alert(boolean badVote) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Confirm vote!");
         alert.setHeaderText(null);
-        alert.setContentText("Is it your last word?");
+        if(badVote)
+            alert.setContentText("Your vote won't count.\n Are you sure?");
+        else
+            alert.setContentText("Is it your last word?");
 
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK) {

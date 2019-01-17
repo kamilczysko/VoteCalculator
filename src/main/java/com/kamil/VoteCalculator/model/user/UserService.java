@@ -26,11 +26,12 @@ public class UserService {
     }
 
     @Secured("unvoted")
-    public void voted(long userId) {
+    public void voted(long userId, boolean badVote) {
         Map<String, Roles> rolesMap = rolesService.getRolesMap();
         User user = userRepo.findById(userId).get();
         System.out.println(user);
         user.setRoles(rolesMap.get("voted"));
+        user.setBadVote(badVote);
         userRepo.save(user);
     }
 
