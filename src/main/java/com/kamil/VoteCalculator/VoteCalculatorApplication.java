@@ -44,8 +44,6 @@ public class VoteCalculatorApplication extends Application implements CommandLin
     RestTemplate restTemplate;
     @Autowired
     CandidateService candidateService;
-    @PersistenceContext
-    EntityManager entityManager;
     @Autowired
     PartyService partyService;
     @Autowired
@@ -66,6 +64,7 @@ public class VoteCalculatorApplication extends Application implements CommandLin
         primaryStage.setTitle("Vote App");
         Scene loadLoginWindow = context.getBean("loadLoginWindow", Scene.class);
         primaryStage.setScene(loadLoginWindow);
+        primaryStage.setResizable(true);
         primaryStage.show();
         this.stage = primaryStage;
     }
@@ -96,16 +95,12 @@ public class VoteCalculatorApplication extends Application implements CommandLin
         Map<String, Party> map = new HashMap<String, Party>();
         for (Party p : partiesSaved) map.put(p.getParty(), p);
 
-        System.out.println(map);
         List<Candidate> candidatesList = candidates.getAllCandidates();
         for (Candidate c : candidatesList) {
             Party party = map.get(c.getPartyName());
             c.setParty(party);
         }
         List<Candidate> candidatesSaved = candidateService.saveAllCandidates(candidatesList);
-
-        System.out.println(candidatesSaved);
-        System.out.println(partiesSaved);
     }
 
     private Candidates getCandidatesFromServer() throws IOException {

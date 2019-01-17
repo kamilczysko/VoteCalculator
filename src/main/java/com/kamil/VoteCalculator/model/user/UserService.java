@@ -7,7 +7,6 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 public class UserService {
@@ -33,6 +32,11 @@ public class UserService {
         user.setRoles(rolesMap.get("voted"));
         user.setBadVote(badVote);
         userRepo.save(user);
+    }
+
+    @Secured("voted")
+    public int getBadVotes(){
+        return userRepo.getBadVotes();
     }
 
 }

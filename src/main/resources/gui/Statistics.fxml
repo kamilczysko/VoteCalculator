@@ -5,52 +5,59 @@
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.chart.StackedBarChart?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="557.0" prefWidth="751.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.kamil.VoteCalculator.gui.Statistics">
+<AnchorPane prefHeight="495.0" prefWidth="841.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.kamil.VoteCalculator.gui.Statistics">
    <children>
-      <TabPane tabClosingPolicy="UNAVAILABLE">
+      <TabPane prefHeight="430.0" prefWidth="817.0" tabClosingPolicy="UNAVAILABLE">
         <tabs>
-          <Tab text="Statistics">
-            <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0">
-                     <padding>
-                        <Insets left="25.0" />
-                     </padding>
-                     <children>
-                        <Button layoutX="6.0" layoutY="317.0" mnemonicParsing="false" onAction="#logout" text="Logout" />
-                     </children>
-                  </AnchorPane>
-            </content>
+          <Tab fx:id="statTab" text="Statistics">
+               <content>
+                  <SplitPane dividerPositions="0.6274238227146814">
+                     <items>
+                        <TableView fx:id="summaryTable" prefHeight="367.0" prefWidth="378.0">
+                          <columns>
+                            <TableColumn id="candidateColumn" fx:id="candidateColumn" prefWidth="172.0" text="Candidate" />
+                            <TableColumn id="partyColumn" fx:id="partyColumn" minWidth="8.0" prefWidth="203.0" text="Party" />
+                              <TableColumn id="voteColumn" fx:id="voteColumn" minWidth="8.0" prefWidth="49.0" text="Votes" />
+                          </columns>
+                        </TableView>
+                        <TableView fx:id="partyTable" prefHeight="367.0" prefWidth="336.0">
+                          <columns>
+                            <TableColumn fx:id="partyNamesColumn" prefWidth="182.0" text="Party" />
+                            <TableColumn fx:id="partyVotesColumn" minWidth="0.0" prefWidth="71.0" text="Votes" />
+                          </columns>
+                        </TableView>
+                     </items>
+                  </SplitPane>
+               </content>
           </Tab>
-          <Tab text="Chart">
+          <Tab fx:id="chartTab" text="Chart">
             <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="332.0" prefWidth="719.0">
-                     <children>
-                        <ScrollPane layoutX="14.0" layoutY="27.0">
-                           <content>
-                              <ScrollPane>
-                                 <content>
-                                    <StackedBarChart fx:id="chart" prefHeight="360.0" prefWidth="719.0">
-                                      <xAxis>
-                                        <CategoryAxis side="BOTTOM" />
-                                      </xAxis>
-                                      <yAxis>
-                                        <NumberAxis side="LEFT" />
-                                      </yAxis>
-                                    </StackedBarChart>
-                                 </content>
-                              </ScrollPane>
-                           </content>
-                        </ScrollPane>
-                     </children></AnchorPane>
+                  <ScrollPane prefHeight="367.0" prefWidth="774.0">
+                     <content>
+                        <StackedBarChart fx:id="chart" prefHeight="369.0" prefWidth="800.0">
+                          <xAxis>
+                            <CategoryAxis side="BOTTOM" />
+                          </xAxis>
+                          <yAxis>
+                            <NumberAxis side="LEFT" />
+                          </yAxis>
+                        </StackedBarChart>
+                     </content>
+                  </ScrollPane>
             </content>
           </Tab>
         </tabs>
@@ -58,7 +65,7 @@
             <Insets top="30.0" />
          </padding>
       </TabPane>
-      <MenuBar>
+      <MenuBar prefHeight="29.0" prefWidth="129.0">
         <menus>
           <Menu mnemonicParsing="false" text="File">
             <items>
@@ -70,5 +77,17 @@
           </Menu>
         </menus>
       </MenuBar>
+      <Button layoutX="658.0" layoutY="444.0" mnemonicParsing="false" onAction="#logout" text="Logout" />
+      <Button layoutX="735.0" layoutY="444.0" mnemonicParsing="false" onAction="#refresh" text="Refresh" />
+      <Label layoutX="25.0" layoutY="431.0" prefHeight="25.0" prefWidth="157.0" text="Voided votes:">
+         <font>
+            <Font size="22.0" />
+         </font>
+      </Label>
+      <Label fx:id="voidedVotes" layoutX="182.0" layoutY="431.0" prefHeight="25.0" prefWidth="183.0" text="0">
+         <font>
+            <Font size="22.0" />
+         </font>
+      </Label>
    </children>
 </AnchorPane>
