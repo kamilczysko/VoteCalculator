@@ -2,16 +2,17 @@ package com.kamil.VoteCalculator.gui;
 
 import com.google.common.hash.Hashing;
 import com.kamil.VoteCalculator.VoteCalculatorApplication;
+import com.kamil.VoteCalculator.model.candidate.CandidateService;
+import com.kamil.VoteCalculator.model.user.UserService;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,7 +21,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 @Component
@@ -32,12 +32,22 @@ public class LoginPanel {
     PasswordEncoder passwordEncoder;
     @Autowired
     AuthenticationManager authenticationManager;
+    @Autowired
+    UserService userService;
+    @Autowired
+    CandidateService candidateService;
+
+    Stage primaryStage;
 
     @FXML
     PasswordField passwordField;
 
     @FXML
     TextField peselField;
+
+//    public void initialize(){
+//        this.primaryStage = context.getBean("primaryStage", Stage.class);
+//    }
 
     @FXML
     private void login() {
@@ -57,10 +67,11 @@ public class LoginPanel {
             Authentication ath = authenticationManager.authenticate(request);
             Authentication authResult = authenticationManager.authenticate(request);
             SecurityContextHolder.getContext().setAuthentication(authResult);
-            Stage loadVoteWindow = context.getBean("loadVoteWindow", Stage.class);
+
+            Scene voteScene = context.getBean("loadVoteWindow", Scene.class);
+            VoteCalculatorApplication.stage.setScene(voteScene);
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            loadVoteWindow.setTitle("Voting panel - "+authentication.getPrincipal());
-            loadVoteWindow.show();
+
         } catch (Exception ex) {
             alert();
             System.out.println(ex);

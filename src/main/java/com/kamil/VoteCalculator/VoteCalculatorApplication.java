@@ -20,10 +20,12 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 
+import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.io.IOException;
@@ -36,6 +38,7 @@ public class VoteCalculatorApplication extends Application implements CommandLin
 
     private ConfigurableApplicationContext context;
     private Parent root;
+    public static Stage stage;
 
     @Autowired
     RestTemplate restTemplate;
@@ -48,6 +51,7 @@ public class VoteCalculatorApplication extends Application implements CommandLin
     @Autowired
     RolesService rolesService;
 
+
     public static void main(String[] args) {
         Application.launch(args);
     }
@@ -56,16 +60,19 @@ public class VoteCalculatorApplication extends Application implements CommandLin
     public void init() throws Exception {
 
         context = SpringApplication.run(VoteCalculatorApplication.class);
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/LoginWindow.fxml"));
-        loader.setControllerFactory(context::getBean);
-        root = loader.load();
+//        FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/LoginWindow.fxml"));
+//        loader.setControllerFactory(context::getBean);
+//        root = context.getBean("loadLoginWindow", Parent.class);
+//        root = loader.load();
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("Vote App");
-        primaryStage.setScene(new Scene(root));
+        Scene loadLoginWindow = context.getBean("loadLoginWindow", Scene.class);
+        primaryStage.setScene(loadLoginWindow);
         primaryStage.show();
+        this.stage = primaryStage;
     }
 
     @Override
@@ -130,5 +137,10 @@ public class VoteCalculatorApplication extends Application implements CommandLin
         return candidates;
     }
 
+    @Bean("mainView")
+    @PostConstruct
+    public Parent loginWindow(){
+        return root;
+    }
 }
 

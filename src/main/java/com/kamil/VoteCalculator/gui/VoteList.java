@@ -1,5 +1,6 @@
 package com.kamil.VoteCalculator.gui;
 
+import com.kamil.VoteCalculator.VoteCalculatorApplication;
 import com.kamil.VoteCalculator.model.candidate.Candidate;
 import com.kamil.VoteCalculator.model.candidate.CandidateService;
 import com.kamil.VoteCalculator.model.user.User;
@@ -9,16 +10,20 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
 
+import java.applet.AppletContext;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,26 +33,36 @@ import java.util.Set;
 @Component
 public class VoteList {
 
+    @Autowired
     private CandidateService candidateService;
+    @Autowired
     private UserService userService;
+    @Autowired
+    ApplicationContext context;
 
     @FXML
-    VBox voteBox;
+    private VBox voteBox;
 
     @FXML
-    Button voteButton;
+    private Button voteButton;
 
     @FXML
-    VBox mainBox;
+    private VBox mainBox;
 
-    List<Node> allNodes = new ArrayList<>();
+    private List<Node> allNodes = new ArrayList<>();
 
 
     private List<Candidate> voted = new ArrayList<Candidate>();
 
     public void initialize() {
         System.out.println(candidateService);
+        loadCandidates();
+    }
 
+    @FXML
+    public void logout() {
+        Scene loginWindow = context.getBean("loadLoginWindow", Scene.class);
+        VoteCalculatorApplication.stage.setScene(loginWindow);
     }
 
     public void loadCandidates() {
@@ -87,16 +102,6 @@ public class VoteList {
         }
     }
 
-    public void setCandidateService(CandidateService candidateService) {
-        this.candidateService = candidateService;
-
-        loadCandidates();
-    }
-
-    public void setUserService(UserService userService) {
-        this.userService = userService;
-    }
-
     @FXML
     private void vote() {
         if (alert()) {
@@ -108,7 +113,6 @@ public class VoteList {
             long currentPrincipalName = Long.parseLong(authentication.getName());
             userService.voted(currentPrincipalName);
             voted.clear();
-//        voteBox.getChildren().removeAll(allNodes);
         }
     }
 
