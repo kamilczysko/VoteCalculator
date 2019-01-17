@@ -3,6 +3,7 @@ package com.kamil.VoteCalculator.model.user;
 import com.kamil.VoteCalculator.model.role.Roles;
 import com.kamil.VoteCalculator.model.role.RolesService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -24,6 +25,7 @@ public class UserService {
         return userRepo.save(user);
     }
 
+    @Secured("unvoted")
     public void voted(long userId) {
         Map<String, Roles> rolesMap = rolesService.getRolesMap();
         User user = userRepo.findById(userId).get();

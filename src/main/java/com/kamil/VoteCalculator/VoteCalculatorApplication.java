@@ -58,12 +58,7 @@ public class VoteCalculatorApplication extends Application implements CommandLin
 
     @Override
     public void init() throws Exception {
-
         context = SpringApplication.run(VoteCalculatorApplication.class);
-//        FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/LoginWindow.fxml"));
-//        loader.setControllerFactory(context::getBean);
-//        root = context.getBean("loadLoginWindow", Parent.class);
-//        root = loader.load();
     }
 
     @Override
@@ -135,12 +130,6 @@ public class VoteCalculatorApplication extends Application implements CommandLin
         Candidates candidates = mapper.readValue(result, Candidates.class);
 
         return candidates;
-    }
-
-    @Bean("mainView")
-    @PostConstruct
-    public Parent loginWindow(){
-        return root;
     }
 }
 

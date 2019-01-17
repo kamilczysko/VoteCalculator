@@ -62,6 +62,7 @@ public class VoteList {
     @FXML
     public void logout() {
         Scene loginWindow = context.getBean("loadLoginWindow", Scene.class);
+        SecurityContextHolder.clearContext();
         VoteCalculatorApplication.stage.setScene(loginWindow);
     }
 
@@ -105,14 +106,22 @@ public class VoteList {
     @FXML
     private void vote() {
         if (alert()) {
-            System.out.println("VOTE!!!");
-            for (Candidate c : voted) {
-                candidateService.vote(c, voted.size() > 1);
+            try {
+                for (Candidate c : voted) {
+                    candidateService.vote(c, voted.size() > 1);
+                }
+                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+                long currentPrincipalName = Long.parseLong(authentication.getName());
+                userService.voted(currentPrincipalName);
+                voted.clear();
+
+                Scene voteScene = context.getBean("loadStatisticsWindow", Scene.class);
+                VoteCalculatorApplication.stage.setScene(voteScene);
+
+
+            } catch (Exception e) {
+                alertVoted();
             }
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            long currentPrincipalName = Long.parseLong(authentication.getName());
-            userService.voted(currentPrincipalName);
-            voted.clear();
         }
     }
 
@@ -120,7 +129,7 @@ public class VoteList {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Confirm vote!");
         alert.setHeaderText(null);
-        alert.setContentText("Confirm vote!");
+        alert.setContentText("Is it your last word?");
 
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK) {
@@ -128,6 +137,15 @@ public class VoteList {
         } else {
             return false;
         }
+    }
+
+    private void alertVoted() {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Vote Error!");
+        alert.setHeaderText(null);
+        alert.setContentText("You have voted already!");
+
+        alert.showAndWait();
     }
 
 }
