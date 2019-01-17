@@ -14,6 +14,7 @@ import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -45,10 +46,6 @@ public class LoginPanel {
     @FXML
     TextField peselField;
 
-//    public void initialize(){
-//        this.primaryStage = context.getBean("primaryStage", Stage.class);
-//    }
-
     @FXML
     private void login() {
         loginDB(peselField.getText(), passwordField.getText());
@@ -67,16 +64,33 @@ public class LoginPanel {
             Authentication ath = authenticationManager.authenticate(request);
             Authentication authResult = authenticationManager.authenticate(request);
             SecurityContextHolder.getContext().setAuthentication(authResult);
-
-            Scene voteScene = context.getBean("loadVoteWindow", Scene.class);
-            VoteCalculatorApplication.stage.setScene(voteScene);
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+            boolean hasVotedRole = authentication.getAuthorities().stream()
+                    .anyMatch(r -> r.getAuthority().equals("ROLE_voted"));
+
+            if (hasVotedRole) {
+                changeToStatScene();
+
+            } else {
+                changeToVoteScene();
+            }
 
         } catch (Exception ex) {
             alert();
             System.out.println(ex);
         }
 
+    }
+
+    private void changeToVoteScene() {
+        Scene voteScene = context.getBean("loadVoteWindow", Scene.class);
+        VoteCalculatorApplication.stage.setScene(voteScene);
+    }
+
+    private void changeToStatScene() {
+        Scene voteScene = context.getBean("loadStatisticsWindow", Scene.class);
+        VoteCalculatorApplication.stage.setScene(voteScene);
     }
 
     private void alert() {

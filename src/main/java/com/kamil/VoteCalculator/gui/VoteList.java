@@ -116,6 +116,7 @@ public class VoteList {
                 voted.clear();
 
                 Scene voteScene = context.getBean("loadStatisticsWindow", Scene.class);
+                VoteCalculatorApplication.stage.setResizable(true);
                 VoteCalculatorApplication.stage.setScene(voteScene);
 
 
