@@ -18,7 +18,7 @@ public class User {
     String pesel;
     @Column(nullable = false)
     String password;
-    @OneToOne
+    @OneToOne(fetch = FetchType.EAGER)
     Roles roles;
     boolean blocked = false;
 

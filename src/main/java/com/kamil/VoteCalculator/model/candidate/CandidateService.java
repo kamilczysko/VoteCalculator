@@ -1,6 +1,7 @@
 package com.kamil.VoteCalculator.model.candidate;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -36,8 +37,9 @@ public class CandidateService {
         return save;
     }
 
-    public void vote(Candidate candidate) {
-        candidate.increaseVote();
+    @Secured("ROLE_unvoted")
+    public void vote(Candidate candidate, boolean badVote) {
+        candidate.increaseVote(badVote);
         candidateRepository.save(candidate);
     }
 

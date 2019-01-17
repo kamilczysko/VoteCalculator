@@ -1,10 +1,16 @@
 package com.kamil.VoteCalculator.gui;
 
 import com.google.common.hash.Hashing;
+import com.kamil.VoteCalculator.VoteCalculatorApplication;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,6 +20,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 @Component
@@ -50,7 +57,10 @@ public class LoginPanel {
             Authentication ath = authenticationManager.authenticate(request);
             Authentication authResult = authenticationManager.authenticate(request);
             SecurityContextHolder.getContext().setAuthentication(authResult);
-
+            Stage loadVoteWindow = context.getBean("loadVoteWindow", Stage.class);
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            loadVoteWindow.setTitle("Voting panel - "+authentication.getPrincipal());
+            loadVoteWindow.show();
         } catch (Exception ex) {
             alert();
             System.out.println(ex);
@@ -58,7 +68,7 @@ public class LoginPanel {
 
     }
 
-    private void alert(){
+    private void alert() {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Login error!");
         alert.setHeaderText(null);
@@ -66,5 +76,4 @@ public class LoginPanel {
 
         alert.showAndWait();
     }
-
 }

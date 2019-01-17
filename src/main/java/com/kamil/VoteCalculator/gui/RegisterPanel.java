@@ -9,6 +9,7 @@ import com.kamil.VoteCalculator.model.user.UserService;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -17,7 +18,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 import java.util.Map;
 
 @Component
@@ -58,6 +58,7 @@ public class RegisterPanel {
 
         if (disallowed.isDisallowed(peselField.getText())) {
             System.out.println("disallowed pesel");
+            alert();
             return;
         }
 
@@ -100,6 +101,15 @@ public class RegisterPanel {
         });
 
         roles = rolesService.getRolesMap();
+    }
+
+    private void alert() {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Register error!");
+        alert.setHeaderText(null);
+        alert.setContentText("Pesel forbidden!");
+
+        alert.showAndWait();
     }
 
 }

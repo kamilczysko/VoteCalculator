@@ -24,10 +24,10 @@ public class UserServiceImplementation implements UserDetailsService {
             return null;
         Set<GrantedAuthority> grantedAuthorities = new HashSet<GrantedAuthority>();
 
-        grantedAuthorities.add(new SimpleGrantedAuthority(user.getRoles().getUserRole()));
+        grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_"+user.getRoles().getUserRole()));
 
         org.springframework.security.core.userdetails.User userToLogin = new org.springframework.security.core.userdetails.User(
-                user.id + "#" + user.firstName + " " + user.secondName, user.getPassword(), true, true, true, true, grantedAuthorities);
+                String.valueOf(user.getId()), user.getPassword(), true, true, true, true, grantedAuthorities);
 
         return userToLogin;
     }
