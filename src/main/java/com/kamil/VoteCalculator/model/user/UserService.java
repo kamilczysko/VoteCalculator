@@ -21,7 +21,6 @@ public class UserService {
         return userRepo.findUserByPesel(pesel);
     }
 
-    @Transactional
     public User registerNewUser( User user) {
         return userRepo.save(user);
     }

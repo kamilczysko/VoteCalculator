@@ -18,11 +18,12 @@ import org.springframework.web.client.RestTemplate;
 @SpringBootApplication
 public class VoteCalculatorApplication extends Application {
 
-    private final Logger logger = LoggerFactory.getLogger(VoteCalculatorApplication.class);
+    private static final Logger logger = LoggerFactory.getLogger(VoteCalculatorApplication.class);
 
     private ConfigurableApplicationContext context;
     private Parent root;
     public static Stage stage;
+    public static boolean firstRun = false;
 
     @Autowired
     RestTemplate restTemplate;
@@ -34,6 +35,10 @@ public class VoteCalculatorApplication extends Application {
     RolesService rolesService;
 
     public static void main(String[] args) {
+        if(args.length > 0) {
+            logger.debug("ARGS: [{}]", args[0]);
+            firstRun = true;
+        }
         Application.launch(args);
     }
 

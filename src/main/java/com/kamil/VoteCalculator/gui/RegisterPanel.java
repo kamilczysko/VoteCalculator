@@ -12,6 +12,8 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.paint.Color;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -22,6 +24,8 @@ import java.util.Map;
 @Component
 public class RegisterPanel {
 
+    private final Logger logger = LoggerFactory.getLogger(RegisterPanel.class);
+
     @Autowired
     private Disallowed disallowed;
     @Autowired
@@ -31,7 +35,7 @@ public class RegisterPanel {
     @Autowired
     private UserService userService;
 
-    private Map<String, Roles> roles;
+    private Map<String, Roles> roles = null;
 
     @FXML
     private Button registerButton;
@@ -155,6 +159,10 @@ public class RegisterPanel {
         });
 
         roles = rolesService.getRolesMap();
+        if (roles == null){
+            logger.error("Database probably has been not initialized properly. Run application from command line with argument\"first\"");
+            System.exit(0);
+        }
     }
 
     private void peselLog(String msg, boolean warn) {

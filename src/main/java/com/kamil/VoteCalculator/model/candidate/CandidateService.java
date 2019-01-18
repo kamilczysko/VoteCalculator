@@ -2,6 +2,7 @@ package com.kamil.VoteCalculator.model.candidate;
 
 import com.fasterxml.jackson.dataformat.xml.JacksonXmlModule;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.kamil.VoteCalculator.VoteCalculatorApplication;
 import com.kamil.VoteCalculator.model.party.Party;
 import com.kamil.VoteCalculator.model.party.PartyService;
 import org.slf4j.Logger;
@@ -66,8 +67,10 @@ public class CandidateService implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        logger.info("CANDIDATES INIT");
-        initCandidatesInDB();
+        if (VoteCalculatorApplication.firstRun) {
+            logger.info("CANDIDATES INIT");
+            initCandidatesInDB();
+        }
     }
 
     private void initCandidatesInDB() throws IOException {

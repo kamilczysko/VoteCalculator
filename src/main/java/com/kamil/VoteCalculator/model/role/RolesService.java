@@ -1,5 +1,6 @@
 package com.kamil.VoteCalculator.model.role;
 
+import com.kamil.VoteCalculator.VoteCalculatorApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,13 +35,15 @@ public class RolesService implements CommandLineRunner {
     public Map<String, Roles> getRolesMap() {
         Map<String, Roles> rolesMap = new HashMap<>();
         List<Roles> all = rolesRepository.findAll();
-        for(Roles r : all)
+        if(all.isEmpty())
+            return null;
+        for (Roles r : all)
             rolesMap.put(r.getUserRole(), r);
 
         return rolesMap;
     }
 
-    private void initRoles(){
+    private void initRoles() {
         Roles unvoted = new Roles();
         unvoted.setUserRole("unvoted");
         Roles voted = new Roles();
@@ -50,7 +53,9 @@ public class RolesService implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        logger.info("ROLES INIT");
-        initRoles();
+        if (VoteCalculatorApplication.firstRun) {
+            logger.info("ROLES INIT");
+            initRoles();
+        }
     }
 }
