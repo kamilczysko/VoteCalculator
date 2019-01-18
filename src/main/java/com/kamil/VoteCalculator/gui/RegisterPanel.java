@@ -138,7 +138,17 @@ public class RegisterPanel {
                 }
 
                 passwordField.setDisable(disable);
-                confirmPasswordField.setDisable(disable);
+            }
+        });
+
+        passwordField.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                if (newValue.length() >= 5) {
+                    confirmPasswordField.setDisable(false);
+                } else {
+                    confirmPasswordField.setDisable(true);
+                }
             }
         });
 

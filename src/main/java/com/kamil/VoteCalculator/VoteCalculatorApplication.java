@@ -69,7 +69,7 @@ public class VoteCalculatorApplication extends Application implements CommandLin
 
     @Override
     public void run(String... args) throws Exception {
-            System.out.println("^^^^^^^^"+args.length);
+            System.out.println("########"+args.length);
 //        if (args.length > 0) {
 
             initCandidatesInDB();
@@ -77,7 +77,7 @@ public class VoteCalculatorApplication extends Application implements CommandLin
             unvoted.setUserRole("unvoted");
             Roles voted = new Roles();
             voted.setUserRole("voted");
-            List<Roles> roles = rolesService.saveRoles(Arrays.asList(voted, unvoted));
+            rolesService.saveRoles(Arrays.asList(voted, unvoted));
 //        }
     }
 

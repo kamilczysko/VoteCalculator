@@ -31,9 +31,9 @@
             <Label text="Pesel" />
             <TextField fx:id="peselField" />
             <Label text="Password" />
-            <PasswordField fx:id="passwordField" disable="true" />
+            <PasswordField fx:id="passwordField" disable="true" promptText="Minimum 5 characters" />
             <Label text="Confim password" />
-            <PasswordField fx:id="confirmPasswordField" disable="true" />
+            <PasswordField fx:id="confirmPasswordField" disable="true" promptText="Confirm password" />
             <Button fx:id="registerButton" disable="true" mnemonicParsing="false" onAction="#register" text="Register">
                <VBox.margin>
                   <Insets top="5.0" />
