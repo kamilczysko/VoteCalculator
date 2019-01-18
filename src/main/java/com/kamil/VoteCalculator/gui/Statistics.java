@@ -17,6 +17,7 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
+import javafx.scene.chart.BarChart;
 import javafx.scene.chart.StackedBarChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
@@ -52,7 +53,9 @@ public class Statistics {
     private CandidateService candidateService;
 
     @FXML
-    StackedBarChart<String, Number> chart;
+    StackedBarChart<String, Number> candidateChart;
+    @FXML
+    BarChart<String, Number> partyChart;
     @FXML
     TableView summaryTable;
     @FXML
@@ -108,7 +111,8 @@ public class Statistics {
         setVoidedVotes();
         setDisallowedVotes();
         getCandidateData();
-        getStatisticsForChart();
+        setCandidateChart();
+        setPartyChart();
     }
 
     @FXML
@@ -117,8 +121,10 @@ public class Statistics {
         setDisallowedVotes();
         if (statTab.isSelected())
             getCandidateData();
-        else
-            getStatisticsForChart();
+        else {
+            setCandidateChart();
+            setPartyChart();
+        }
     }
 
     @FXML
@@ -132,7 +138,7 @@ public class Statistics {
     @FXML
     private void exportPDF() {
 
-        chart.setAnimated(false);
+        candidateChart.setAnimated(false);
 
         FileChooser fileChooser = new FileChooser();
         fileChooser.setInitialFileName("summary.pdf");
@@ -148,9 +154,9 @@ public class Statistics {
             Font summaryFont = FontFactory.getFont(FontFactory.COURIER, 16, BaseColor.BLACK);
             Font tipFont = FontFactory.getFont(FontFactory.COURIER, 8, BaseColor.DARK_GRAY);
 
-            WritableImage img = new WritableImage((int) chart.getWidth(), (int) chart.getHeight());
+            WritableImage img = new WritableImage((int) candidateChart.getWidth(), (int) candidateChart.getHeight());
             SnapshotParameters params = new SnapshotParameters();
-            WritableImage snapshot = chart.snapshot(params, img);
+            WritableImage snapshot = candidateChart.snapshot(params, img);
             ByteArrayOutputStream byteOutput = new ByteArrayOutputStream();
             ImageIO.write(SwingFXUtils.fromFXImage(snapshot, null), "png", byteOutput);
 
@@ -159,6 +165,15 @@ public class Statistics {
             image.scaleAbsoluteWidth(width);
             float height = image.getHeight() * 0.85f;
             image.scaleToFit(width, height);
+
+
+            WritableImage imgParty = new WritableImage((int) partyChart.getWidth(), (int) partyChart.getHeight());
+            SnapshotParameters paramsParty = new SnapshotParameters();
+            WritableImage snapshotParty = partyChart.snapshot(paramsParty, imgParty);
+            ByteArrayOutputStream byteOutputParty = new ByteArrayOutputStream();
+            ImageIO.write(SwingFXUtils.fromFXImage(snapshotParty, null), "png", byteOutputParty);
+
+            Image imageParty = com.itextpdf.text.Image.getInstance(byteOutputParty.toByteArray());
 
             PdfPTable candidateTable = new PdfPTable(3);
 
@@ -207,15 +222,19 @@ public class Statistics {
             voidedVotes.setSpacingBefore(10);
 
             document.add(new Paragraph("Vote summary", headerFont));
-            document.add(new Paragraph("candidates summary", summaryFont));
+            document.add(new Paragraph("Candidates summary", summaryFont));
             document.add(candidateTable);
-            document.add(new Paragraph("parties summary", summaryFont));
+            document.add(new Paragraph("Parties summary", summaryFont));
             document.add(partyTable);
-            document.add(new Paragraph("voided votes summary", summaryFont));
+            document.add(new Paragraph("Voided votes summary", summaryFont));
             document.add(voidedVotes);
             document.add(new Chunk("*Disallowed votes included in voided votes", tipFont));
-            document.add(Chunk.NEWLINE);
+            document.add(Chunk.NEXTPAGE);
+            document.add(new Paragraph("Charts", headerFont));
+            document.add(new Paragraph("Candidates chart", summaryFont));
             document.add(image);
+            document.add(new Paragraph("Parties chart", summaryFont));
+            document.add(imageParty);
             document.close();
 
         } catch (FileNotFoundException e) {
@@ -228,7 +247,7 @@ public class Statistics {
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            chart.setAnimated(true);
+            candidateChart.setAnimated(true);
         }
     }
 
@@ -290,12 +309,31 @@ public class Statistics {
     }
 
     @FXML
+    private void refreshMenu() {
+        setVoidedVotes();
+        setDisallowedVotes();
+        if (statTab.isSelected())
+            getCandidateData();
+        else {
+            setCandidateChart();
+            setPartyChart();
+        }
+    }
+
+    @FXML
+    private void logoutMenu() {
+        Scene loginWindow = context.getBean("loadLoginWindow", Scene.class);
+        VoteCalculatorApplication.stage.setScene(loginWindow);
+        SecurityContextHolder.clearContext();
+    }
+
+    @FXML
     private void close() {
         System.exit(0);
     }
 
-    private void getStatisticsForChart() {
-        chart.getData().clear();
+    private void setCandidateChart() {
+        candidateChart.getData().clear();
 
         MultiValueMap<String, Candidate> allCandidates = candidateService.getAllCandidatesToMap();
         Set<String> strings = allCandidates.keySet();
@@ -306,7 +344,18 @@ public class Statistics {
             for (Candidate c : candidates) {
                 series1.getData().add(new XYChart.Data(c.getName(), c.getVotes()));
             }
-            chart.getData().add(series1);
+            candidateChart.getData().add(series1);
+        }
+    }
+
+    private void setPartyChart() {
+        partyChart.getData().clear();
+
+        for (PartyTable pt : this.partiesData) {
+            XYChart.Series series = new XYChart.Series();
+            series.setName(pt.getName());
+            series.getData().add(new XYChart.Data(pt.getName(), pt.getVotes()));
+            partyChart.getData().add(series);
         }
     }
 }

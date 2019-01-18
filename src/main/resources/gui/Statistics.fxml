@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.BarChart?>
 <?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.chart.StackedBarChart?>
@@ -19,9 +20,9 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="495.0" prefWidth="841.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.kamil.VoteCalculator.gui.Statistics">
+<AnchorPane prefHeight="511.0" prefWidth="1073.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.kamil.VoteCalculator.gui.Statistics">
    <children>
-      <TabPane prefHeight="430.0" prefWidth="817.0" tabClosingPolicy="UNAVAILABLE">
+      <TabPane prefHeight="445.0" prefWidth="1082.0" tabClosingPolicy="UNAVAILABLE">
         <tabs>
           <Tab fx:id="statTab" text="Statistics">
                <content>
@@ -46,18 +47,34 @@
           </Tab>
           <Tab fx:id="chartTab" text="Chart">
             <content>
-                  <ScrollPane prefHeight="367.0" prefWidth="774.0">
-                     <content>
-                        <StackedBarChart fx:id="chart" prefHeight="369.0" prefWidth="800.0">
-                          <xAxis>
-                            <CategoryAxis side="BOTTOM" />
-                          </xAxis>
-                          <yAxis>
-                            <NumberAxis side="LEFT" />
-                          </yAxis>
-                        </StackedBarChart>
-                     </content>
-                  </ScrollPane>
+                  <SplitPane dividerPositions="0.6876155268022182" prefHeight="367.0" prefWidth="859.0">
+                     <items>
+                        <ScrollPane prefHeight="367.0" prefWidth="774.0">
+                           <content>
+                              <StackedBarChart fx:id="candidateChart" prefHeight="363.0" prefWidth="783.0" title="Candidates">
+                                <xAxis>
+                                  <CategoryAxis side="BOTTOM" />
+                                </xAxis>
+                                <yAxis>
+                                  <NumberAxis side="LEFT" />
+                                </yAxis>
+                              </StackedBarChart>
+                           </content>
+                        </ScrollPane>
+                        <ScrollPane>
+                           <content>
+                              <BarChart fx:id="partyChart" focusTraversable="false" horizontalGridLinesVisible="true" horizontalZeroLineVisible="true" legendVisible="true" mouseTransparent="false" prefHeight="370.0" prefWidth="300.0" title="Parties" verticalGridLinesVisible="false" verticalZeroLineVisible="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                <xAxis>
+                                  <CategoryAxis side="LEFT" />
+                                </xAxis>
+                                <yAxis>
+                                  <NumberAxis />
+                                </yAxis>
+                              </BarChart>
+                           </content>
+                        </ScrollPane>
+                     </items>
+                  </SplitPane>
             </content>
           </Tab>
         </tabs>
@@ -72,34 +89,37 @@
                   <MenuItem mnemonicParsing="false" onAction="#exportCSV" text="Export CSV" />
                   <MenuItem mnemonicParsing="false" onAction="#exportPDF" text="Export PDF" />
                   <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem mnemonicParsing="false" onAction="#refreshMenu" text="Refresh" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem mnemonicParsing="false" onAction="#logoutMenu" text="Logout" />
               <MenuItem mnemonicParsing="false" onAction="#close" text="Close" />
             </items>
           </Menu>
         </menus>
       </MenuBar>
-      <Button layoutX="658.0" layoutY="444.0" mnemonicParsing="false" onAction="#logout" text="Logout" />
-      <Button layoutX="735.0" layoutY="444.0" mnemonicParsing="false" onAction="#refresh" text="Refresh" />
-      <Label layoutX="25.0" layoutY="431.0" prefHeight="25.0" prefWidth="157.0" text="Voided votes:">
+      <Button layoutX="923.0" layoutY="463.0" mnemonicParsing="false" onAction="#logout" text="Logout" />
+      <Button layoutX="1000.0" layoutY="463.0" mnemonicParsing="false" onAction="#refresh" text="Refresh" />
+      <Label layoutX="24.0" layoutY="442.0" prefHeight="25.0" prefWidth="157.0" text="Voided votes:">
          <font>
             <Font size="22.0" />
          </font>
       </Label>
-      <Label fx:id="voidedVotesLabel" layoutX="182.0" layoutY="431.0" prefHeight="25.0" prefWidth="183.0" text="0">
+      <Label fx:id="voidedVotesLabel" layoutX="181.0" layoutY="442.0" prefHeight="25.0" prefWidth="183.0" text="0">
          <font>
             <Font size="22.0" />
          </font>
       </Label>
-      <Label layoutX="25.0" layoutY="468.0" prefHeight="26.0" prefWidth="210.0" text="Disallowed votes:">
+      <Label layoutX="24.0" layoutY="479.0" prefHeight="26.0" prefWidth="210.0" text="Disallowed votes:">
          <font>
             <Font size="22.0" />
          </font>
       </Label>
-      <Label fx:id="disallowedVotesLabel" layoutX="226.0" layoutY="468.0" prefHeight="25.0" prefWidth="183.0" text="0">
+      <Label fx:id="disallowedVotesLabel" layoutX="225.0" layoutY="479.0" prefHeight="25.0" prefWidth="183.0" text="0">
          <font>
             <Font size="22.0" />
          </font>
       </Label>
-      <Label layoutX="27.0" layoutY="449.0" prefHeight="16.0" prefWidth="183.0" text="*Included disallowed votes">
+      <Label layoutX="26.0" layoutY="460.0" prefHeight="16.0" prefWidth="183.0" text="*Included disallowed votes">
          <font>
             <Font size="10.0" />
          </font>
