@@ -7,6 +7,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.Valid;
 import java.util.Map;
 
 @Service
@@ -21,12 +22,11 @@ public class UserService {
         return userRepo.findUserByPesel(pesel);
     }
 
-    public User registerNewUser(User user) {
+    public User registerNewUser( User user) {
         return userRepo.save(user);
     }
 
     @Secured("unvoted")
-    @Transactional
     public User voted(long userId, boolean badVote) {
         Map<String, Roles> rolesMap = rolesService.getRolesMap();
         User user = userRepo.findById(userId).get();

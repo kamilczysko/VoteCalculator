@@ -10,7 +10,6 @@ import com.kamil.VoteCalculator.model.party.PartyService;
 import com.kamil.VoteCalculator.model.role.Roles;
 import com.kamil.VoteCalculator.model.role.RolesService;
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -19,15 +18,9 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Primary;
-import org.springframework.context.annotation.Scope;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 
-import javax.annotation.PostConstruct;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.io.IOException;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -76,16 +69,19 @@ public class VoteCalculatorApplication extends Application implements CommandLin
 
     @Override
     public void run(String... args) throws Exception {
-        initCandidates();
+            System.out.println("^^^^^^^^"+args.length);
+//        if (args.length > 0) {
 
-        Roles unvoted = new Roles();
-        unvoted.setUserRole("unvoted");
-        Roles voted = new Roles();
-        voted.setUserRole("voted");
-        List<Roles> roles = rolesService.saveRoles(Arrays.asList(voted, unvoted));
+            initCandidatesInDB();
+            Roles unvoted = new Roles();
+            unvoted.setUserRole("unvoted");
+            Roles voted = new Roles();
+            voted.setUserRole("voted");
+            List<Roles> roles = rolesService.saveRoles(Arrays.asList(voted, unvoted));
+//        }
     }
 
-    private void initCandidates() throws IOException {
+    private void initCandidatesInDB() throws IOException {
         Candidates candidates = getCandidatesFromServer();
         Set<Party> partySet = candidates.getAllParties();
         List<Party> partiesList = new ArrayList<>();
@@ -100,7 +96,8 @@ public class VoteCalculatorApplication extends Application implements CommandLin
             Party party = map.get(c.getPartyName());
             c.setParty(party);
         }
-        List<Candidate> candidatesSaved = candidateService.saveAllCandidates(candidatesList);
+
+        candidateService.saveAllCandidates(candidatesList);
     }
 
     private Candidates getCandidatesFromServer() throws IOException {

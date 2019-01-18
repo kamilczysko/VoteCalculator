@@ -59,7 +59,7 @@ public class RegisterPanel {
         boolean disallowed = this.disallowed.isDisallowed(peselField.getText());
 
         if (disallowed)
-            alert();
+            alertDisallowed();
 
         registerUser(disallowed);
 
@@ -85,7 +85,12 @@ public class RegisterPanel {
         user.setPesel(peselHash);
         user.setRoles(roles.get("unvoted"));
 
-        userService.registerNewUser(user);
+        try {
+            userService.registerNewUser(user);
+        }catch (Exception e){
+            System.out.println(e);
+            alertRegister();
+        }
     }
 
     public void initialize() {
@@ -103,11 +108,20 @@ public class RegisterPanel {
         roles = rolesService.getRolesMap();
     }
 
-    private void alert() {
+    private void alertDisallowed() {
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle("Register warning!");
         alert.setHeaderText(null);
-        alert.setContentText("Pesel disallowed!\n Your vote will be voided.");
+        alert.setContentText("Pesel disallowed!\nYour vote will be voided.");
+
+        alert.showAndWait();
+    }
+
+    private void alertRegister() {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("Register warning!");
+        alert.setHeaderText(null);
+        alert.setContentText("Cannot register user.");
 
         alert.showAndWait();
     }

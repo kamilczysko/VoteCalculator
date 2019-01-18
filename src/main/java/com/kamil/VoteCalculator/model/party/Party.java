@@ -5,8 +5,6 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import javax.persistence.*;
 
 @Entity
-//@Table(uniqueConstraints = {
-//        @UniqueConstraint(columnNames = "party_name")})
 public class Party {
 
     @Id
