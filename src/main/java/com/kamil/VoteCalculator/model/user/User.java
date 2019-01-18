@@ -20,9 +20,13 @@ public class User {
     String password;
     @OneToOne(fetch = FetchType.EAGER)
     Roles roles;
+
     boolean blocked = false;
 
-    boolean badVote = false;
+    boolean voidedVote = false;
+
+    boolean disallowed = false;
+
 
     public long getId() {
         return id;
@@ -80,12 +84,20 @@ public class User {
         this.blocked = blocked;
     }
 
-    public boolean isBadVote() {
-        return badVote;
+    public boolean isVoidedVote() {
+        return voidedVote;
     }
 
-    public void setBadVote(boolean badVote) {
-        this.badVote = badVote;
+    public void setVoidedVote(boolean voidedVote) {
+        this.voidedVote = voidedVote;
+    }
+
+    public boolean isDisallowed() {
+        return disallowed;
+    }
+
+    public void setDisallowed(boolean disallowed) {
+        this.disallowed = disallowed;
     }
 }
 

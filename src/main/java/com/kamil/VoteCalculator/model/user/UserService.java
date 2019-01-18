@@ -5,6 +5,7 @@ import com.kamil.VoteCalculator.model.role.RolesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
 
@@ -25,18 +26,33 @@ public class UserService {
     }
 
     @Secured("unvoted")
-    public void voted(long userId, boolean badVote) {
+    @Transactional
+    public User voted(long userId, boolean badVote) {
         Map<String, Roles> rolesMap = rolesService.getRolesMap();
         User user = userRepo.findById(userId).get();
-        System.out.println(user);
+
+        if (badVote || user.isDisallowed())
+            user.setVoidedVote(true);
+
         user.setRoles(rolesMap.get("voted"));
-        user.setBadVote(badVote);
         userRepo.save(user);
+
+        return user;
     }
 
     @Secured("voted")
-    public int getBadVotes(){
-        return userRepo.getBadVotes();
+    public int getBadVotes() {
+        Integer voidedVotes = userRepo.getVoidedVotes();
+        if (voidedVotes == null)
+            return 0;
+        return voidedVotes.intValue();
     }
 
+    @Secured("voted")
+    public int getDisallowedVotes() {
+        Integer disallowedVotes = userRepo.getDisallowedVotes();
+        if (disallowedVotes == null)
+            return 0;
+        return disallowedVotes.intValue();
+    }
 }

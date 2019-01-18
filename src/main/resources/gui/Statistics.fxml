@@ -84,7 +84,17 @@
             <Font size="22.0" />
          </font>
       </Label>
-      <Label fx:id="voidedVotes" layoutX="182.0" layoutY="431.0" prefHeight="25.0" prefWidth="183.0" text="0">
+      <Label fx:id="voidedVotesLabel" layoutX="182.0" layoutY="431.0" prefHeight="25.0" prefWidth="183.0" text="0">
+         <font>
+            <Font size="22.0" />
+         </font>
+      </Label>
+      <Label layoutX="25.0" layoutY="457.0" prefHeight="26.0" prefWidth="210.0" text="Disallowed votes:">
+         <font>
+            <Font size="22.0" />
+         </font>
+      </Label>
+      <Label fx:id="disallowedVotesLabel" layoutX="226.0" layoutY="457.0" prefHeight="25.0" prefWidth="183.0" text="0">
          <font>
             <Font size="22.0" />
          </font>

@@ -74,9 +74,12 @@ public class Statistics {
     TableColumn partyVotesColumn;
 
     @FXML
-    Label voidedVotes;
+    Label voidedVotesLabel;
+    @FXML
+    Label disallowedVotesLabel;
 
-    private int badVotes = 0;
+    private int voidedVotes = 0;
+    private int disallowedVotes = 0;
 
     final ObservableList<CandidateTable> candidatesData = FXCollections.observableArrayList();
     final ObservableList<PartyTable> partiesData = FXCollections.observableArrayList();
@@ -103,6 +106,7 @@ public class Statistics {
         partyTable.setItems(partiesData);
 
         setVoidedVotes();
+        setDisallowedVotes();
         getCandidateData();
         getStatisticsForChart();
     }
@@ -110,6 +114,7 @@ public class Statistics {
     @FXML
     public void refresh() {
         setVoidedVotes();
+        setDisallowedVotes();
         if (statTab.isSelected())
             getCandidateData();
         else
@@ -188,7 +193,9 @@ public class Statistics {
             PdfPTable voidedVotes = new PdfPTable(2);
 
             voidedVotes.addCell("Voided votes");
-            voidedVotes.addCell(String.valueOf(badVotes));
+            voidedVotes.addCell(String.valueOf(this.voidedVotes));
+            voidedVotes.addCell("Disallowed votes");
+            voidedVotes.addCell(String.valueOf(this.disallowedVotes));
 
             candidateTable.setSpacingAfter(15);
             partyTable.setSpacingAfter(15);
@@ -270,8 +277,13 @@ public class Statistics {
     }
 
     private void setVoidedVotes() {
-        badVotes = userService.getBadVotes();
-        voidedVotes.setText(String.valueOf(badVotes));
+        voidedVotes = userService.getBadVotes();
+        voidedVotesLabel.setText(String.valueOf(voidedVotes));
+    }
+
+    private void setDisallowedVotes() {
+        disallowedVotes = userService.getDisallowedVotes();
+        disallowedVotesLabel.setText(String.valueOf(disallowedVotes));
     }
 
     @FXML

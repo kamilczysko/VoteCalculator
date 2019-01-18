@@ -56,13 +56,12 @@ public class RegisterPanel {
     @FXML
     private void register() {
 
-        if (disallowed.isDisallowed(peselField.getText())) {
-            System.out.println("disallowed pesel");
-            alert();
-            return;
-        }
+        boolean disallowed = this.disallowed.isDisallowed(peselField.getText());
 
-        registerUser();
+        if (disallowed)
+            alert();
+
+        registerUser(disallowed);
 
         firstNameField.clear();
         secondNameField.clear();
@@ -72,7 +71,7 @@ public class RegisterPanel {
         registerButton.setDisable(true);
     }
 
-    private void registerUser() {
+    private void registerUser(boolean disallowed) {
 
         String peselHash = Hashing.sha256()
                 .hashString(peselField.getText(), StandardCharsets.UTF_8)
@@ -82,6 +81,7 @@ public class RegisterPanel {
         user.setFirstName(firstNameField.getText());
         user.setSecondName(secondNameField.getText());
         user.setPassword(passwordEncoder.encode(passwordField.getText()));
+        user.setDisallowed(disallowed);
         user.setPesel(peselHash);
         user.setRoles(roles.get("unvoted"));
 
@@ -104,10 +104,10 @@ public class RegisterPanel {
     }
 
     private void alert() {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Register error!");
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("Register warning!");
         alert.setHeaderText(null);
-        alert.setContentText("Pesel forbidden!");
+        alert.setContentText("Pesel disallowed!\n Your vote will be voided.");
 
         alert.showAndWait();
     }

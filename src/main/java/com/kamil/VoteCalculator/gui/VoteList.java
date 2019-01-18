@@ -108,16 +108,16 @@ public class VoteList {
         boolean badVote = voted.size() != 1;
         if (alert(badVote)) {
             try {
-                if (!badVote) {
-                    for (Candidate c : voted) {
-                        candidateService.vote(c, voted.size() > 1);
+                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+                long currentPrincipalName = Long.parseLong(authentication.getName());
+                User voted = userService.voted(currentPrincipalName, badVote);
+                if (!badVote && !voted.isDisallowed()) {
+                    for (Candidate c : this.voted) {
+                        candidateService.vote(c, this.voted.size() > 1);
                     }
                 }
 
-                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-                long currentPrincipalName = Long.parseLong(authentication.getName());
-                userService.voted(currentPrincipalName, badVote);
-                voted.clear();
+                this.voted.clear();
                 Scene voteScene = context.getBean("loadStatisticsWindow", Scene.class);
                 VoteCalculatorApplication.stage.setResizable(true);
                 VoteCalculatorApplication.stage.setScene(voteScene);
