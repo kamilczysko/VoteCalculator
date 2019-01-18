@@ -6,13 +6,12 @@ import com.kamil.VoteCalculator.model.role.Roles;
 import com.kamil.VoteCalculator.model.role.RolesService;
 import com.kamil.VoteCalculator.model.user.User;
 import com.kamil.VoteCalculator.model.user.UserService;
+import com.kamil.VoteCalculator.utils.TimeUtil;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.paint.Color;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -52,6 +51,8 @@ public class RegisterPanel {
     @FXML
     private PasswordField confirmPasswordField;
 
+    @FXML
+    private Label peselLog;
 
     @FXML
     private void register() {
@@ -59,7 +60,7 @@ public class RegisterPanel {
         boolean disallowed = this.disallowed.isDisallowed(peselField.getText());
 
         if (disallowed)
-            alertDisallowed();
+            warning("Pesel disallowed!\nYour vote will be voided");
 
         registerUser(disallowed);
 
@@ -72,6 +73,11 @@ public class RegisterPanel {
     }
 
     private void registerUser(boolean disallowed) {
+
+        if (firstNameField.getText().isEmpty() || secondNameField.getText().isEmpty()) {
+            warning("Fill all fields!");
+            return;
+        }
 
         String peselHash = Hashing.sha256()
                 .hashString(peselField.getText(), StandardCharsets.UTF_8)
@@ -87,14 +93,16 @@ public class RegisterPanel {
 
         try {
             userService.registerNewUser(user);
-        }catch (Exception e){
+            confirm();
+        } catch (Exception e) {
             System.out.println(e);
-            alertRegister();
+            warning("Cannot register user");
         }
     }
 
     public void initialize() {
         registerButton.setDisable(true);
+
         confirmPasswordField.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -105,23 +113,60 @@ public class RegisterPanel {
             }
         });
 
+        peselField.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                boolean disable = true;
+                if (!newValue.matches("[0-9]*")) {
+                    peselField.setText(oldValue);
+                    newValue = oldValue;
+                    disable = true;
+                } else if (newValue.length() > 11) {
+                    disable = true;
+                    peselLog("Pesel too long!", true);
+                } else if (newValue.length() < 11) {
+                    peselLog.setText("");
+                }
+
+                if (newValue.length() == 11) {
+                    if (TimeUtil.isAdult(newValue.substring(0, 6))) {
+                        peselLog("Pesel ok!", false);
+                        disable = false;
+                    } else {
+                        peselLog("You are to young to vote!", true);
+                    }
+                }
+
+                passwordField.setDisable(disable);
+                confirmPasswordField.setDisable(disable);
+            }
+        });
+
         roles = rolesService.getRolesMap();
     }
 
-    private void alertDisallowed() {
+    private void peselLog(String msg, boolean warn) {
+        if (warn)
+            peselLog.setTextFill(Color.RED);
+        else
+            peselLog.setTextFill(Color.GREEN);
+        peselLog.setText(msg);
+    }
+
+    private void warning(String msg) {
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle("Register warning!");
         alert.setHeaderText(null);
-        alert.setContentText("Pesel disallowed!\nYour vote will be voided.");
+        alert.setContentText(msg);
 
         alert.showAndWait();
     }
 
-    private void alertRegister() {
-        Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle("Register warning!");
+    private void confirm() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Register");
         alert.setHeaderText(null);
-        alert.setContentText("Cannot register user.");
+        alert.setContentText("Account created");
 
         alert.showAndWait();
     }

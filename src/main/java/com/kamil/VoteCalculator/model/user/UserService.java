@@ -5,18 +5,16 @@ import com.kamil.VoteCalculator.model.role.RolesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import javax.validation.Valid;
 import java.util.Map;
 
 @Service
 public class UserService {
 
     @Autowired
-    UserRepository userRepo;
+    private UserRepository userRepo;
     @Autowired
-    RolesService rolesService;
+    private RolesService rolesService;
 
     public User getUserByPesel(String pesel) {
         return userRepo.findUserByPesel(pesel);
