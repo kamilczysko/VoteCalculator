@@ -1,10 +1,7 @@
 package com.kamil.VoteCalculator.configuration;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.dataformat.xml.JacksonXmlModule;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import com.kamil.VoteCalculator.Stats;
 import com.kamil.VoteCalculator.model.Disallowed;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

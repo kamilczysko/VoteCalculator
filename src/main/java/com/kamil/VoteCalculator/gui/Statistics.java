@@ -1,5 +1,9 @@
 package com.kamil.VoteCalculator.gui;
 
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
 import com.kamil.VoteCalculator.VoteCalculatorApplication;
 import com.kamil.VoteCalculator.model.candidate.Candidate;
 import com.kamil.VoteCalculator.model.candidate.CandidateService;
@@ -8,8 +12,10 @@ import com.kamil.VoteCalculator.model.candidate.PartyTable;
 import com.kamil.VoteCalculator.model.user.UserService;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.chart.StackedBarChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
@@ -17,18 +23,21 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.WritableImage;
 import javafx.stage.FileChooser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.http.codec.multipart.Part;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
 
-import java.io.File;
+import javax.imageio.ImageIO;
+import java.io.*;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
 @Component
 public class Statistics {
@@ -64,6 +73,8 @@ public class Statistics {
 
     @FXML
     Label voidedVotes;
+
+    private int badVotes = 0;
 
     final ObservableList<CandidateTable> candidatesData = FXCollections.observableArrayList();
     final ObservableList<PartyTable> partiesData = FXCollections.observableArrayList();
@@ -114,19 +125,99 @@ public class Statistics {
     @FXML
     private void exportPDF() {
 
-//        Document document = new Document();
-//        PdfWriter.getInstance(document, new FileOutputStream("iTextHelloWorld.pdf"));
-//
-//        document.open();
-//        Font font = FontFactory.getFont(FontFactory.COURIER, 16, BaseColor.BLACK);
-//        Chunk chunk = new Chunk("Hello World", font);
-//
-//        document.add(chunk);
-//        documentnt.close();
+        chart.setAnimated(false);
 
         FileChooser fileChooser = new FileChooser();
+        fileChooser.setInitialFileName("summary.pdf");
         fileChooser.setTitle("Save summary in pdf");
         File file = fileChooser.showSaveDialog(VoteCalculatorApplication.stage);
+        try {
+
+            Document document = new Document();
+            PdfWriter.getInstance(document, new FileOutputStream(file));
+
+            document.open();
+            Font headerFont = FontFactory.getFont(FontFactory.COURIER_BOLD, 20, BaseColor.BLACK);
+            Font summaryFont = FontFactory.getFont(FontFactory.COURIER, 16, BaseColor.BLACK);
+
+            WritableImage img = new WritableImage((int) chart.getWidth(), (int) chart.getHeight());
+            SnapshotParameters params = new SnapshotParameters();
+            WritableImage snapshot = chart.snapshot(params, img);
+            ByteArrayOutputStream byteOutput = new ByteArrayOutputStream();
+            ImageIO.write(SwingFXUtils.fromFXImage(snapshot, null), "png", byteOutput);
+
+            Image image = com.itextpdf.text.Image.getInstance(byteOutput.toByteArray());
+            float width = PageSize.A4.getWidth() * 0.85f;
+            image.scaleAbsoluteWidth(width);
+            float height = image.getHeight() * 0.85f;
+            image.scaleToFit(width, height);
+
+            PdfPTable candidateTable = new PdfPTable(3);
+
+            Stream.of("Name", "Party", "Votes").forEach(c -> {
+                PdfPCell h = new PdfPCell();
+                h.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                h.setBorderWidth(2);
+                h.setPhrase(new Phrase(c));
+                candidateTable.addCell(h);
+            });
+
+            for (CandidateTable c : candidatesData) {
+                candidateTable.addCell(c.getName());
+                candidateTable.addCell(c.getParty());
+                candidateTable.addCell(String.valueOf(c.getVotes()));
+            }
+
+            PdfPTable partyTable = new PdfPTable(2);
+
+            Stream.of("Party", "Votes").forEach(c -> {
+                PdfPCell h = new PdfPCell();
+                h.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                h.setBorderWidth(2);
+                h.setPhrase(new Phrase(c));
+                partyTable.addCell(h);
+            });
+
+            for (PartyTable p : partiesData) {
+                partyTable.addCell(p.getName());
+                partyTable.addCell(String.valueOf(p.getVotes()));
+            }
+
+            PdfPTable voidedVotes = new PdfPTable(2);
+
+            voidedVotes.addCell("Voided votes");
+            voidedVotes.addCell(String.valueOf(badVotes));
+
+            candidateTable.setSpacingAfter(15);
+            partyTable.setSpacingAfter(15);
+            voidedVotes.setSpacingAfter(15);
+
+            candidateTable.setSpacingBefore(15);
+            partyTable.setSpacingBefore(15);
+            voidedVotes.setSpacingBefore(15);
+
+            document.add(new Paragraph("Vote summary", headerFont));
+            document.add(new Paragraph("candidates summary", summaryFont));
+            document.add(candidateTable);
+            document.add(new Paragraph("parties summary", summaryFont));
+            document.add(partyTable);
+            document.add(new Paragraph("voided votes summary", summaryFont));
+            document.add(voidedVotes);
+            document.add(image);
+            document.close();
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+
+        } catch (DocumentException e) {
+            e.printStackTrace();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            chart.setAnimated(true);
+        }
     }
 
     private void getCandidateData() {
@@ -152,7 +243,7 @@ public class Statistics {
     }
 
     private void setVoidedVotes() {
-        int badVotes = userService.getBadVotes();
+        badVotes = userService.getBadVotes();
         voidedVotes.setText(String.valueOf(badVotes));
     }
 
@@ -181,5 +272,4 @@ public class Statistics {
             chart.getData().add(series1);
         }
     }
-
 }
