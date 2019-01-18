@@ -15,6 +15,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     User findUserByPesel(String pesel);
 
+    @Query("SELECT u.disallowed FROM User u WHERE u.pesel = '?1'")
+    boolean isUserDisallowed(String peselHash);
+
     @Override
     Optional<User> findById(Long aLong);
 

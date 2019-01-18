@@ -61,12 +61,7 @@ public class RegisterPanel {
     @FXML
     private void register() {
 
-        boolean disallowed = this.disallowed.isDisallowed(peselField.getText());
-
-        if (disallowed)
-            warning("Pesel disallowed!\nYour vote will be voided");
-
-        boolean isRegistred = registerUser(disallowed);
+        boolean isRegistred = registerUser();
         if (isRegistred) {
             firstNameField.clear();
             secondNameField.clear();
@@ -77,7 +72,7 @@ public class RegisterPanel {
         }
     }
 
-    private boolean registerUser(boolean disallowed) {
+    private boolean registerUser() {
 
         if (firstNameField.getText().isEmpty() || secondNameField.getText().isEmpty()) {
             warning("Fill all fields!");
@@ -92,7 +87,6 @@ public class RegisterPanel {
         user.setFirstName(firstNameField.getText());
         user.setSecondName(secondNameField.getText());
         user.setPassword(passwordEncoder.encode(passwordField.getText()));
-        user.setDisallowed(disallowed);
         user.setPesel(peselHash);
         user.setRoles(roles.get("unvoted"));
 

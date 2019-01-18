@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.util.Map;
 
 @Service
@@ -20,9 +19,18 @@ public class UserService {
     public User getUserByPesel(String pesel) {
         return userRepo.findUserByPesel(pesel);
     }
-
     public User registerNewUser( User user) {
         return userRepo.save(user);
+    }
+
+    public void setUserDisallowed(String peselHash){
+        User user = userRepo.findUserByPesel(peselHash);
+        user.setDisallowed(true);
+        userRepo.save(user);
+    }
+
+    public boolean isDisallowed(String peselHash){
+        return userRepo.isUserDisallowed(peselHash);
     }
 
     @Secured("unvoted")

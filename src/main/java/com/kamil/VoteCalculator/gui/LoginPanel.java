@@ -2,6 +2,7 @@ package com.kamil.VoteCalculator.gui;
 
 import com.google.common.hash.Hashing;
 import com.kamil.VoteCalculator.VoteCalculatorApplication;
+import com.kamil.VoteCalculator.model.Disallowed;
 import com.kamil.VoteCalculator.model.candidate.CandidateService;
 import com.kamil.VoteCalculator.model.user.UserService;
 import javafx.fxml.FXML;
@@ -33,6 +34,8 @@ public class LoginPanel {
     UserService userService;
     @Autowired
     CandidateService candidateService;
+    @Autowired
+    Disallowed disallowed;
 
     @FXML
     PasswordField passwordField;
@@ -41,6 +44,7 @@ public class LoginPanel {
 
     @FXML
     private void login() {
+
         loginDB(peselField.getText(), passwordField.getText());
     }
 
@@ -49,6 +53,11 @@ public class LoginPanel {
         String peselHash = Hashing.sha256()
                 .hashString(pesel, StandardCharsets.UTF_8)
                 .toString();
+
+        if(disallowed.isDisallowed(peselField.getText())) {
+            alert("You are disallowed to vote!\nYour vote wont count.", false);
+            userService.setUserDisallowed(peselHash);
+        }
 
         UsernamePasswordAuthenticationToken request = new UsernamePasswordAuthenticationToken(peselHash, password);
         try {
@@ -68,7 +77,7 @@ public class LoginPanel {
             }
 
         } catch (Exception ex) {
-            alert();
+            alert("Bad credentials!", true);
             System.out.println(ex);
         }
 
@@ -86,11 +95,18 @@ public class LoginPanel {
         VoteCalculatorApplication.stage.sizeToScene();
     }
 
-    private void alert() {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Login error!");
+    private void alert(String msg, boolean error) {
+        Alert alert;
+
+        if(error){
+            alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Login error!");
+        }else{
+            alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Login warning!");
+        }
         alert.setHeaderText(null);
-        alert.setContentText("Bad credentials");
+        alert.setContentText(msg);
 
         alert.showAndWait();
     }
