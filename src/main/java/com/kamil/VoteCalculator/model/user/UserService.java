@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Map;
 
 @Service
@@ -20,6 +21,7 @@ public class UserService {
         return userRepo.findUserByPesel(pesel);
     }
 
+    @Transactional
     public User registerNewUser( User user) {
         return userRepo.save(user);
     }
