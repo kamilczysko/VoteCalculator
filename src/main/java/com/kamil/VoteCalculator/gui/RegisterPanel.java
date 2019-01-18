@@ -74,8 +74,8 @@ public class RegisterPanel {
 
     private boolean registerUser() {
 
-        if (firstNameField.getText().isEmpty() || secondNameField.getText().isEmpty()) {
-            warning("Fill all fields!");
+        if (firstNameField.getText().isEmpty() || secondNameField.getText().isEmpty() || !(passwordField.getText().equals(confirmPasswordField.getText()))) {
+            warning("Fill all fields properly!");
             return false;
         }
 
@@ -109,6 +109,8 @@ public class RegisterPanel {
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                 if (newValue.equals(passwordField.getText())) {
                     registerButton.setDisable(false);
+                } else {
+                    registerButton.setDisable(true);
                 }
             }
         });
@@ -153,7 +155,7 @@ public class RegisterPanel {
         });
 
         roles = rolesService.getRolesMap();
-        if (roles == null){
+        if (roles == null) {
             logger.error("Database probably has been not initialized properly. Run application from command line with argument\"first\"");
             System.exit(0);
         }
