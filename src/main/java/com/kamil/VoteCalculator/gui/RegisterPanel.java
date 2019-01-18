@@ -6,7 +6,7 @@ import com.kamil.VoteCalculator.model.role.Roles;
 import com.kamil.VoteCalculator.model.role.RolesService;
 import com.kamil.VoteCalculator.model.user.User;
 import com.kamil.VoteCalculator.model.user.UserService;
-import com.kamil.VoteCalculator.utils.TimeUtil;
+import com.kamil.VoteCalculator.utils.TimeUtils;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -62,21 +62,22 @@ public class RegisterPanel {
         if (disallowed)
             warning("Pesel disallowed!\nYour vote will be voided");
 
-        registerUser(disallowed);
-
-        firstNameField.clear();
-        secondNameField.clear();
-        peselField.clear();
-        passwordField.clear();
-        confirmPasswordField.clear();
-        registerButton.setDisable(true);
+        boolean isRegistred = registerUser(disallowed);
+        if (isRegistred) {
+            firstNameField.clear();
+            secondNameField.clear();
+            peselField.clear();
+            passwordField.clear();
+            confirmPasswordField.clear();
+            registerButton.setDisable(true);
+        }
     }
 
-    private void registerUser(boolean disallowed) {
+    private boolean registerUser(boolean disallowed) {
 
         if (firstNameField.getText().isEmpty() || secondNameField.getText().isEmpty()) {
             warning("Fill all fields!");
-            return;
+            return false;
         }
 
         String peselHash = Hashing.sha256()
@@ -94,9 +95,11 @@ public class RegisterPanel {
         try {
             userService.registerNewUser(user);
             confirm();
+            return true;
         } catch (Exception e) {
             System.out.println(e);
             warning("Cannot register user");
+            return false;
         }
     }
 
@@ -106,7 +109,6 @@ public class RegisterPanel {
         confirmPasswordField.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                System.out.println(newValue);
                 if (newValue.equals(passwordField.getText())) {
                     registerButton.setDisable(false);
                 }
@@ -129,7 +131,7 @@ public class RegisterPanel {
                 }
 
                 if (newValue.length() == 11) {
-                    if (TimeUtil.isAdult(newValue.substring(0, 6))) {
+                    if (TimeUtils.isAdult(newValue.substring(0, 6))) {
                         peselLog("Pesel ok!", false);
                         disable = false;
                     } else {
