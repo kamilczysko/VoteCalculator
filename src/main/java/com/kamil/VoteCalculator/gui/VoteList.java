@@ -108,14 +108,16 @@ public class VoteList {
         boolean badVote = voted.size() != 1;
         if (alert(badVote)) {
             try {
-                for (Candidate c : voted) {
-                    candidateService.vote(c, voted.size() > 1);
+                if (!badVote) {
+                    for (Candidate c : voted) {
+                        candidateService.vote(c, voted.size() > 1);
+                    }
                 }
+
                 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
                 long currentPrincipalName = Long.parseLong(authentication.getName());
                 userService.voted(currentPrincipalName, badVote);
                 voted.clear();
-
                 Scene voteScene = context.getBean("loadStatisticsWindow", Scene.class);
                 VoteCalculatorApplication.stage.setResizable(true);
                 VoteCalculatorApplication.stage.setScene(voteScene);
@@ -131,7 +133,7 @@ public class VoteList {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Confirm vote!");
         alert.setHeaderText(null);
-        if(badVote)
+        if (badVote)
             alert.setContentText("Your vote won't count.\n Are you sure?");
         else
             alert.setContentText("Is it your last word?");

@@ -10,6 +10,7 @@ import com.kamil.VoteCalculator.model.candidate.CandidateService;
 import com.kamil.VoteCalculator.model.candidate.CandidateTable;
 import com.kamil.VoteCalculator.model.candidate.PartyTable;
 import com.kamil.VoteCalculator.model.user.UserService;
+import com.kamil.VoteCalculator.utils.CSVUtils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
@@ -35,6 +36,7 @@ import javax.imageio.ImageIO;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -220,6 +222,31 @@ public class Statistics {
         }
     }
 
+    @FXML
+    private void exportCSV() {
+        try {
+
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setInitialFileName("summary.csv");
+            fileChooser.setTitle("Export summary to csv");
+            File file = fileChooser.showSaveDialog(VoteCalculatorApplication.stage);
+
+            FileWriter writer = null;
+            writer = new FileWriter(file);
+
+            CSVUtils.writeLine(writer, Arrays.asList("name", "party", "votes"));
+
+            for (CandidateTable c : candidatesData)
+                CSVUtils.writeLine(writer, Arrays.asList(c.getName(), c.getParty(), String.valueOf(c.getVotes())));
+
+            writer.flush();
+            writer.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void getCandidateData() {
         MultiValueMap<String, Candidate> allCandidates = candidateService.getAllCandidatesToMap();
         List<PartyTable> partiesList = new ArrayList<>();
@@ -245,11 +272,6 @@ public class Statistics {
     private void setVoidedVotes() {
         badVotes = userService.getBadVotes();
         voidedVotes.setText(String.valueOf(badVotes));
-    }
-
-    @FXML
-    private void exportCSV() {
-
     }
 
     @FXML
