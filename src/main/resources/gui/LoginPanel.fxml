@@ -10,13 +10,13 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="400.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.kamil.VoteCalculator.gui.LoginPanel">
+<AnchorPane prefHeight="400.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.kamil.VoteCalculator.gui.LoginPanel">
    <children>
       <VBox prefWidth="300.0">
          <children>
-            <Label alignment="BOTTOM_LEFT" prefHeight="27.0" prefWidth="125.0" text="Login">
+            <Label alignment="BOTTOM_LEFT" prefWidth="125.0" text="Login">
                <font>
-                  <Font size="14.0" />
+                  <Font size="19.0" />
                </font>
             </Label>
             <Separator prefWidth="200.0" />
@@ -24,7 +24,10 @@
             <TextField fx:id="peselField" prefHeight="26.0" prefWidth="254.0" />
             <Label text="password:" />
             <PasswordField fx:id="passwordField" />
-            <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onAction="#login" text="Login" />
+            <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onAction="#login" text="Login">
+               <VBox.margin>
+                  <Insets top="5.0" />
+               </VBox.margin></Button>
          </children>
          <padding>
             <Insets left="5.0" />

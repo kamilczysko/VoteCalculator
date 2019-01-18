@@ -11,6 +11,7 @@
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
@@ -18,111 +19,124 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="511.0" prefWidth="1073.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.kamil.VoteCalculator.gui.Statistics">
+<AnchorPane prefHeight="550.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.kamil.VoteCalculator.gui.Statistics">
    <children>
-      <TabPane prefHeight="445.0" prefWidth="1082.0" tabClosingPolicy="UNAVAILABLE">
-        <tabs>
-          <Tab fx:id="statTab" text="Statistics">
-               <content>
-                  <SplitPane dividerPositions="0.6274238227146814">
-                     <items>
-                        <TableView fx:id="summaryTable" prefHeight="367.0" prefWidth="378.0">
-                          <columns>
-                            <TableColumn id="candidateColumn" fx:id="candidateColumn" prefWidth="172.0" text="Candidate" />
-                            <TableColumn id="partyColumn" fx:id="partyColumn" minWidth="8.0" prefWidth="203.0" text="Party" />
-                              <TableColumn id="voteColumn" fx:id="voteColumn" minWidth="8.0" prefWidth="49.0" text="Votes" />
-                          </columns>
-                        </TableView>
-                        <TableView fx:id="partyTable" prefHeight="367.0" prefWidth="336.0">
-                          <columns>
-                            <TableColumn fx:id="partyNamesColumn" prefWidth="182.0" text="Party" />
-                            <TableColumn fx:id="partyVotesColumn" minWidth="0.0" prefWidth="71.0" text="Votes" />
-                          </columns>
-                        </TableView>
-                     </items>
-                  </SplitPane>
-               </content>
-          </Tab>
-          <Tab fx:id="chartTab" text="Chart">
-            <content>
-                  <SplitPane dividerPositions="0.6876155268022182" prefHeight="367.0" prefWidth="859.0">
-                     <items>
-                        <ScrollPane prefHeight="367.0" prefWidth="774.0">
-                           <content>
-                              <StackedBarChart fx:id="candidateChart" prefHeight="363.0" prefWidth="783.0" title="Candidates">
-                                <xAxis>
-                                  <CategoryAxis side="BOTTOM" />
-                                </xAxis>
-                                <yAxis>
-                                  <NumberAxis side="LEFT" />
-                                </yAxis>
-                              </StackedBarChart>
-                           </content>
-                        </ScrollPane>
-                        <ScrollPane>
-                           <content>
-                              <BarChart fx:id="partyChart" focusTraversable="false" horizontalGridLinesVisible="true" horizontalZeroLineVisible="true" legendVisible="true" mouseTransparent="false" prefHeight="370.0" prefWidth="300.0" title="Parties" verticalGridLinesVisible="false" verticalZeroLineVisible="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                <xAxis>
-                                  <CategoryAxis side="LEFT" />
-                                </xAxis>
-                                <yAxis>
-                                  <NumberAxis />
-                                </yAxis>
-                              </BarChart>
-                           </content>
-                        </ScrollPane>
-                     </items>
-                  </SplitPane>
-            </content>
-          </Tab>
-        </tabs>
-         <padding>
-            <Insets top="30.0" />
-         </padding>
-      </TabPane>
-      <MenuBar prefHeight="29.0" prefWidth="129.0">
-        <menus>
-          <Menu mnemonicParsing="false" text="File">
-            <items>
-                  <MenuItem mnemonicParsing="false" onAction="#exportCSV" text="Export CSV" />
-                  <MenuItem mnemonicParsing="false" onAction="#exportPDF" text="Export PDF" />
-                  <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem mnemonicParsing="false" onAction="#refreshMenu" text="Refresh" />
-                  <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem mnemonicParsing="false" onAction="#logoutMenu" text="Logout" />
-              <MenuItem mnemonicParsing="false" onAction="#close" text="Close" />
-            </items>
-          </Menu>
-        </menus>
-      </MenuBar>
-      <Button layoutX="923.0" layoutY="463.0" mnemonicParsing="false" onAction="#logout" text="Logout" />
-      <Button layoutX="1000.0" layoutY="463.0" mnemonicParsing="false" onAction="#refresh" text="Refresh" />
-      <Label layoutX="24.0" layoutY="442.0" prefHeight="25.0" prefWidth="157.0" text="Voided votes:">
-         <font>
-            <Font size="22.0" />
-         </font>
-      </Label>
-      <Label fx:id="voidedVotesLabel" layoutX="181.0" layoutY="442.0" prefHeight="25.0" prefWidth="183.0" text="0">
-         <font>
-            <Font size="22.0" />
-         </font>
-      </Label>
-      <Label layoutX="24.0" layoutY="479.0" prefHeight="26.0" prefWidth="210.0" text="Disallowed votes:">
-         <font>
-            <Font size="22.0" />
-         </font>
-      </Label>
-      <Label fx:id="disallowedVotesLabel" layoutX="225.0" layoutY="479.0" prefHeight="25.0" prefWidth="183.0" text="0">
-         <font>
-            <Font size="22.0" />
-         </font>
-      </Label>
-      <Label layoutX="26.0" layoutY="460.0" prefHeight="16.0" prefWidth="183.0" text="*Included disallowed votes">
-         <font>
-            <Font size="10.0" />
-         </font>
-      </Label>
+      <VBox prefHeight="550.0" prefWidth="1100.0">
+         <children>
+            <MenuBar prefHeight="29.0">
+              <menus>
+                <Menu mnemonicParsing="false" text="File">
+                  <items>
+                        <MenuItem mnemonicParsing="false" onAction="#exportCSV" text="Export CSV" />
+                        <MenuItem mnemonicParsing="false" onAction="#exportPDF" text="Export PDF" />
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem mnemonicParsing="false" onAction="#refreshMenu" text="Refresh" />
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem mnemonicParsing="false" onAction="#logoutMenu" text="Logout" />
+                    <MenuItem mnemonicParsing="false" onAction="#close" text="Close" />
+                  </items>
+                </Menu>
+              </menus>
+            </MenuBar>
+            <TabPane prefHeight="445.0" prefWidth="1100.0" tabClosingPolicy="UNAVAILABLE">
+              <tabs>
+                <Tab fx:id="statTab" text="Statistics">
+                     <content>
+                        <SplitPane dividerPositions="0.6274238227146814">
+                           <items>
+                              <TableView fx:id="summaryTable" prefHeight="367.0" prefWidth="378.0">
+                                <columns>
+                                  <TableColumn id="candidateColumn" fx:id="candidateColumn" prefWidth="172.0" text="Candidate" />
+                                  <TableColumn id="partyColumn" fx:id="partyColumn" minWidth="8.0" prefWidth="203.0" text="Party" />
+                                    <TableColumn id="voteColumn" fx:id="voteColumn" minWidth="8.0" prefWidth="49.0" text="Votes" />
+                                </columns>
+                              </TableView>
+                              <TableView fx:id="partyTable" prefHeight="367.0" prefWidth="336.0">
+                                <columns>
+                                  <TableColumn fx:id="partyNamesColumn" prefWidth="182.0" text="Party" />
+                                  <TableColumn fx:id="partyVotesColumn" minWidth="0.0" prefWidth="71.0" text="Votes" />
+                                </columns>
+                              </TableView>
+                           </items>
+                        </SplitPane>
+                     </content>
+                </Tab>
+                <Tab fx:id="chartTab" text="Chart">
+                  <content>
+                        <SplitPane dividerPositions="0.7209090909090909" prefHeight="400.0" prefWidth="1100.0">
+                           <items>
+                              <ScrollPane prefHeight="400.0" prefWidth="789.0">
+                                 <content>
+                                    <StackedBarChart fx:id="candidateChart" prefHeight="363.0" prefWidth="772.0" title="Candidates">
+                                      <xAxis>
+                                        <CategoryAxis side="BOTTOM" />
+                                      </xAxis>
+                                      <yAxis>
+                                        <NumberAxis side="LEFT" />
+                                      </yAxis>
+                                    </StackedBarChart>
+                                 </content>
+                              </ScrollPane>
+                              <ScrollPane>
+                                 <content>
+                                    <BarChart fx:id="partyChart" focusTraversable="false" horizontalGridLinesVisible="true" horizontalZeroLineVisible="true" legendVisible="true" mouseTransparent="false" prefHeight="341.0" prefWidth="294.0" title="Parties" verticalGridLinesVisible="false" verticalZeroLineVisible="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                      <xAxis>
+                                        <CategoryAxis side="LEFT" />
+                                      </xAxis>
+                                      <yAxis>
+                                        <NumberAxis />
+                                      </yAxis>
+                                    </BarChart>
+                                 </content>
+                              </ScrollPane>
+                           </items>
+                        </SplitPane>
+                  </content>
+                </Tab>
+              </tabs>
+               <padding>
+                  <Insets top="30.0" />
+               </padding>
+            </TabPane>
+            <Separator prefWidth="200.0" />
+            <AnchorPane>
+               <children>
+                  <Button layoutX="899.0" layoutY="21.0" mnemonicParsing="false" onAction="#logout" text="Logout" />
+                  <Button layoutX="976.0" layoutY="21.0" mnemonicParsing="false" onAction="#refresh" text="Refresh" />
+                  <Label prefHeight="25.0" prefWidth="157.0" text="Voided votes:">
+                     <font>
+                        <Font size="22.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="voidedVotesLabel" layoutX="157.0" prefHeight="25.0" prefWidth="183.0" text="0">
+                     <font>
+                        <Font size="22.0" />
+                     </font>
+                  </Label>
+                  <Label layoutY="37.0" prefHeight="26.0" prefWidth="210.0" text="Disallowed votes:">
+                     <font>
+                        <Font size="22.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="disallowedVotesLabel" layoutX="201.0" layoutY="37.0" prefHeight="25.0" prefWidth="183.0" text="0">
+                     <font>
+                        <Font size="22.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="2.0" layoutY="18.0" prefHeight="16.0" prefWidth="183.0" text="*Included disallowed votes">
+                     <font>
+                        <Font size="10.0" />
+                     </font>
+                  </Label>
+               </children>
+               <VBox.margin>
+                  <Insets left="15.0" />
+               </VBox.margin>
+            </AnchorPane>
+         </children>
+      </VBox>
    </children>
 </AnchorPane>

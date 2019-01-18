@@ -62,8 +62,9 @@ public class VoteCalculatorApplication extends Application implements CommandLin
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("Vote App");
         Scene loadLoginWindow = context.getBean("loadLoginWindow", Scene.class);
-        primaryStage.setScene(loadLoginWindow);
         primaryStage.setResizable(true);
+        primaryStage.setScene(loadLoginWindow);
+        primaryStage.sizeToScene();
         primaryStage.show();
         this.stage = primaryStage;
     }

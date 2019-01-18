@@ -131,6 +131,8 @@ public class Statistics {
     private void logout() {
 //        getStatistics();
         Scene loginWindow = context.getBean("loadLoginWindow", Scene.class);
+        VoteCalculatorApplication.stage.setWidth(loginWindow.getWidth());
+        VoteCalculatorApplication.stage.setHeight(loginWindow.getHeight());
         VoteCalculatorApplication.stage.setScene(loginWindow);
         SecurityContextHolder.clearContext();
     }
@@ -144,135 +146,140 @@ public class Statistics {
         fileChooser.setInitialFileName("summary.pdf");
         fileChooser.setTitle("Save summary in pdf");
         File file = fileChooser.showSaveDialog(VoteCalculatorApplication.stage);
-        try {
+        if (file != null) {
+            try {
 
-            Document document = new Document();
-            PdfWriter.getInstance(document, new FileOutputStream(file));
+                Document document = new Document();
+                PdfWriter.getInstance(document, new FileOutputStream(file));
 
-            document.open();
-            Font headerFont = FontFactory.getFont(FontFactory.COURIER_BOLD, 20, BaseColor.BLACK);
-            Font summaryFont = FontFactory.getFont(FontFactory.COURIER, 16, BaseColor.BLACK);
-            Font tipFont = FontFactory.getFont(FontFactory.COURIER, 8, BaseColor.DARK_GRAY);
+                document.open();
+                Font headerFont = FontFactory.getFont(FontFactory.COURIER_BOLD, 20, BaseColor.BLACK);
+                Font summaryFont = FontFactory.getFont(FontFactory.COURIER, 16, BaseColor.BLACK);
+                Font tipFont = FontFactory.getFont(FontFactory.COURIER, 8, BaseColor.DARK_GRAY);
 
-            WritableImage img = new WritableImage((int) candidateChart.getWidth(), (int) candidateChart.getHeight());
-            SnapshotParameters params = new SnapshotParameters();
-            WritableImage snapshot = candidateChart.snapshot(params, img);
-            ByteArrayOutputStream byteOutput = new ByteArrayOutputStream();
-            ImageIO.write(SwingFXUtils.fromFXImage(snapshot, null), "png", byteOutput);
+                WritableImage img = new WritableImage((int) candidateChart.getWidth(), (int) candidateChart.getHeight());
+                SnapshotParameters params = new SnapshotParameters();
+                WritableImage snapshot = candidateChart.snapshot(params, img);
+                ByteArrayOutputStream byteOutput = new ByteArrayOutputStream();
+                ImageIO.write(SwingFXUtils.fromFXImage(snapshot, null), "png", byteOutput);
 
-            Image image = com.itextpdf.text.Image.getInstance(byteOutput.toByteArray());
-            float width = PageSize.A4.getWidth() * 0.85f;
-            image.scaleAbsoluteWidth(width);
-            float height = image.getHeight() * 0.85f;
-            image.scaleToFit(width, height);
+                Image image = com.itextpdf.text.Image.getInstance(byteOutput.toByteArray());
+                float width = PageSize.A4.getWidth() * 0.85f;
+                image.scaleAbsoluteWidth(width);
+                float height = image.getHeight() * 0.85f;
+                image.scaleToFit(width, height);
 
 
-            WritableImage imgParty = new WritableImage((int) partyChart.getWidth(), (int) partyChart.getHeight());
-            SnapshotParameters paramsParty = new SnapshotParameters();
-            WritableImage snapshotParty = partyChart.snapshot(paramsParty, imgParty);
-            ByteArrayOutputStream byteOutputParty = new ByteArrayOutputStream();
-            ImageIO.write(SwingFXUtils.fromFXImage(snapshotParty, null), "png", byteOutputParty);
+                WritableImage imgParty = new WritableImage((int) partyChart.getWidth(), (int) partyChart.getHeight());
+                SnapshotParameters paramsParty = new SnapshotParameters();
+                WritableImage snapshotParty = partyChart.snapshot(paramsParty, imgParty);
+                ByteArrayOutputStream byteOutputParty = new ByteArrayOutputStream();
+                ImageIO.write(SwingFXUtils.fromFXImage(snapshotParty, null), "png", byteOutputParty);
 
-            Image imageParty = com.itextpdf.text.Image.getInstance(byteOutputParty.toByteArray());
+                Image imageParty = com.itextpdf.text.Image.getInstance(byteOutputParty.toByteArray());
 
-            PdfPTable candidateTable = new PdfPTable(3);
+                PdfPTable candidateTable = new PdfPTable(3);
 
-            Stream.of("Name", "Party", "Votes").forEach(c -> {
-                PdfPCell h = new PdfPCell();
-                h.setBackgroundColor(BaseColor.LIGHT_GRAY);
-                h.setBorderWidth(2);
-                h.setPhrase(new Phrase(c));
-                candidateTable.addCell(h);
-            });
+                Stream.of("Name", "Party", "Votes").forEach(c -> {
+                    PdfPCell h = new PdfPCell();
+                    h.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                    h.setBorderWidth(2);
+                    h.setPhrase(new Phrase(c));
+                    candidateTable.addCell(h);
+                });
 
-            for (CandidateTable c : candidatesData) {
-                candidateTable.addCell(c.getName());
-                candidateTable.addCell(c.getParty());
-                candidateTable.addCell(String.valueOf(c.getVotes()));
+                for (CandidateTable c : candidatesData) {
+                    candidateTable.addCell(c.getName());
+                    candidateTable.addCell(c.getParty());
+                    candidateTable.addCell(String.valueOf(c.getVotes()));
+                }
+
+                PdfPTable partyTable = new PdfPTable(2);
+
+                Stream.of("Party", "Votes").forEach(c -> {
+                    PdfPCell h = new PdfPCell();
+                    h.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                    h.setBorderWidth(2);
+                    h.setPhrase(new Phrase(c));
+                    partyTable.addCell(h);
+                });
+
+                for (PartyTable p : partiesData) {
+                    partyTable.addCell(p.getName());
+                    partyTable.addCell(String.valueOf(p.getVotes()));
+                }
+
+                PdfPTable voidedVotes = new PdfPTable(2);
+
+                voidedVotes.addCell("*Voided votes");
+                voidedVotes.addCell(String.valueOf(this.voidedVotes));
+                voidedVotes.addCell("Disallowed votes");
+                voidedVotes.addCell(String.valueOf(this.disallowedVotes));
+
+                candidateTable.setSpacingAfter(10);
+                partyTable.setSpacingAfter(10);
+                voidedVotes.setSpacingAfter(0);
+
+                candidateTable.setSpacingBefore(10);
+                partyTable.setSpacingBefore(10);
+                voidedVotes.setSpacingBefore(10);
+
+                document.add(new Paragraph("Vote summary", headerFont));
+                document.add(new Paragraph("Candidates summary", summaryFont));
+                document.add(candidateTable);
+                document.add(new Paragraph("Parties summary", summaryFont));
+                document.add(partyTable);
+                document.add(new Paragraph("Voided votes summary", summaryFont));
+                document.add(voidedVotes);
+                document.add(new Chunk("*Disallowed votes included in voided votes", tipFont));
+                document.add(Chunk.NEXTPAGE);
+                document.add(new Paragraph("Charts", headerFont));
+                document.add(new Paragraph("Candidates chart", summaryFont));
+                document.add(image);
+                document.add(new Paragraph("Parties chart", summaryFont));
+                document.add(imageParty);
+                document.close();
+
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+
+            } catch (DocumentException e) {
+                e.printStackTrace();
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                candidateChart.setAnimated(true);
             }
-
-            PdfPTable partyTable = new PdfPTable(2);
-
-            Stream.of("Party", "Votes").forEach(c -> {
-                PdfPCell h = new PdfPCell();
-                h.setBackgroundColor(BaseColor.LIGHT_GRAY);
-                h.setBorderWidth(2);
-                h.setPhrase(new Phrase(c));
-                partyTable.addCell(h);
-            });
-
-            for (PartyTable p : partiesData) {
-                partyTable.addCell(p.getName());
-                partyTable.addCell(String.valueOf(p.getVotes()));
-            }
-
-            PdfPTable voidedVotes = new PdfPTable(2);
-
-            voidedVotes.addCell("*Voided votes");
-            voidedVotes.addCell(String.valueOf(this.voidedVotes));
-            voidedVotes.addCell("Disallowed votes");
-            voidedVotes.addCell(String.valueOf(this.disallowedVotes));
-
-            candidateTable.setSpacingAfter(10);
-            partyTable.setSpacingAfter(10);
-            voidedVotes.setSpacingAfter(0);
-
-            candidateTable.setSpacingBefore(10);
-            partyTable.setSpacingBefore(10);
-            voidedVotes.setSpacingBefore(10);
-
-            document.add(new Paragraph("Vote summary", headerFont));
-            document.add(new Paragraph("Candidates summary", summaryFont));
-            document.add(candidateTable);
-            document.add(new Paragraph("Parties summary", summaryFont));
-            document.add(partyTable);
-            document.add(new Paragraph("Voided votes summary", summaryFont));
-            document.add(voidedVotes);
-            document.add(new Chunk("*Disallowed votes included in voided votes", tipFont));
-            document.add(Chunk.NEXTPAGE);
-            document.add(new Paragraph("Charts", headerFont));
-            document.add(new Paragraph("Candidates chart", summaryFont));
-            document.add(image);
-            document.add(new Paragraph("Parties chart", summaryFont));
-            document.add(imageParty);
-            document.close();
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-
-        } catch (DocumentException e) {
-            e.printStackTrace();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            candidateChart.setAnimated(true);
         }
     }
 
     @FXML
     private void exportCSV() {
-        try {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setInitialFileName("summary.csv");
+        fileChooser.setTitle("Export summary to csv");
+        File file = fileChooser.showSaveDialog(VoteCalculatorApplication.stage);
 
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.setInitialFileName("summary.csv");
-            fileChooser.setTitle("Export summary to csv");
-            File file = fileChooser.showSaveDialog(VoteCalculatorApplication.stage);
+        if (file != null) {
+            try {
 
-            FileWriter writer = null;
-            writer = new FileWriter(file);
 
-            CSVUtils.writeLine(writer, Arrays.asList("name", "party", "votes"));
+                FileWriter writer = null;
+                writer = new FileWriter(file);
 
-            for (CandidateTable c : candidatesData)
-                CSVUtils.writeLine(writer, Arrays.asList(c.getName(), c.getParty(), String.valueOf(c.getVotes())));
+                CSVUtils.writeLine(writer, Arrays.asList("name", "party", "votes"));
 
-            writer.flush();
-            writer.close();
+                for (CandidateTable c : candidatesData)
+                    CSVUtils.writeLine(writer, Arrays.asList(c.getName(), c.getParty(), String.valueOf(c.getVotes())));
 
-        } catch (IOException e) {
-            e.printStackTrace();
+                writer.flush();
+                writer.close();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -324,6 +331,7 @@ public class Statistics {
     private void logoutMenu() {
         Scene loginWindow = context.getBean("loadLoginWindow", Scene.class);
         VoteCalculatorApplication.stage.setScene(loginWindow);
+        VoteCalculatorApplication.stage.sizeToScene();
         SecurityContextHolder.clearContext();
     }
 

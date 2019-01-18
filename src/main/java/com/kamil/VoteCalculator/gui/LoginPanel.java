@@ -77,11 +77,13 @@ public class LoginPanel {
     private void changeToVoteScene() {
         Scene voteScene = context.getBean("loadVoteWindow", Scene.class);
         VoteCalculatorApplication.stage.setScene(voteScene);
+        VoteCalculatorApplication.stage.sizeToScene();
     }
 
     private void changeToStatScene() {
-        Scene voteScene = context.getBean("loadStatisticsWindow", Scene.class);
-        VoteCalculatorApplication.stage.setScene(voteScene);
+        Scene statScene = context.getBean("loadStatisticsWindow", Scene.class);
+        VoteCalculatorApplication.stage.setScene(statScene);
+        VoteCalculatorApplication.stage.sizeToScene();
     }
 
     private void alert() {

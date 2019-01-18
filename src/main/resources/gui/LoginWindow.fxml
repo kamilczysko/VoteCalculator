@@ -1,24 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Tab?>
-<?import javafx.scene.control.TabPane?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
 
-<AnchorPane xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.kamil.VoteCalculator.gui.LoginWindow">
+<AnchorPane prefHeight="550.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.kamil.VoteCalculator.gui.LoginWindow">
    <children>
-      <TabPane prefWidth="300.0">
-         <tabs>
-            <Tab text="Login panel">
-               <content>
+      <HBox layoutX="245.0" prefHeight="483.0" prefWidth="627.0">
+         <children>
+            <AnchorPane prefHeight="200.0" prefWidth="200.0">
+               <children>
                   <fx:include source="LoginPanel.fxml" />
-               </content>
-            </Tab>
-            <Tab text="Register panel">
-               <content>
+               </children>
+               <HBox.margin>
+                  <Insets right="10.0" top="50.0" />
+               </HBox.margin>
+            </AnchorPane>
+            <Separator orientation="VERTICAL" prefHeight="263.0" prefWidth="62.0" />
+            <AnchorPane prefHeight="200.0" prefWidth="200.0">
+               <children>
                   <fx:include source="RegisterPanel.fxml" />
-               </content>
-            </Tab>
-         </tabs>
-      </TabPane>
+               </children>
+               <HBox.margin>
+                  <Insets top="50.0" />
+               </HBox.margin>
+            </AnchorPane>
+         </children>
+      </HBox>
    </children>
 </AnchorPane>

@@ -18,7 +18,7 @@
                <children>
                   <Label alignment="CENTER" contentDisplay="CENTER" text="Register">
                      <font>
-                        <Font size="15.0" />
+                        <Font size="19.0" />
                      </font>
                   </Label>
                </children>

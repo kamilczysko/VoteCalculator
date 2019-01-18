@@ -7,6 +7,7 @@ import com.kamil.VoteCalculator.model.user.User;
 import com.kamil.VoteCalculator.model.user.UserService;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -16,6 +17,8 @@ import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.stage.Stage;
+import javafx.stage.Window;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.core.Authentication;
@@ -55,7 +58,7 @@ public class VoteList {
     private List<Candidate> voted = new ArrayList<Candidate>();
 
     public void initialize() {
-        System.out.println(candidateService);
+        System.out.println("################ VOTE LIST");
         loadCandidates();
     }
 
@@ -64,11 +67,10 @@ public class VoteList {
         Scene loginWindow = context.getBean("loadLoginWindow", Scene.class);
         SecurityContextHolder.clearContext();
         VoteCalculatorApplication.stage.setScene(loginWindow);
+        voted.clear();
     }
 
     public void loadCandidates() {
-
-//        this.candidateService = candidateService;
 
         MultiValueMap<String, Candidate> allCandidates = candidateService.getAllCandidatesToMap();
         Set<String> longs = allCandidates.keySet();
@@ -104,7 +106,7 @@ public class VoteList {
     }
 
     @FXML
-    private void vote() {
+    private void vote(ActionEvent event) {
         boolean badVote = voted.size() != 1;
         if (alert(badVote)) {
             try {
@@ -118,12 +120,18 @@ public class VoteList {
                 }
 
                 this.voted.clear();
-                Scene voteScene = context.getBean("loadStatisticsWindow", Scene.class);
-                VoteCalculatorApplication.stage.setResizable(true);
-                VoteCalculatorApplication.stage.setScene(voteScene);
-
+                Scene statScene = context.getBean("loadStatisticsWindow", Scene.class);
+                Stage stage  = (Stage)(((Node) event.getSource()).getScene()).getWindow();
+                stage.getScene().getRoot().prefWidth(1100.0);
+                stage.getScene().getRoot().prefHeight(450.0);
+                stage.setScene(statScene);
+                stage.sizeToScene();
+//                stage.show();
+//                VoteCalculatorApplication.stage.setScene(statScene);
+//                VoteCalculatorApplication.stage.sizeToScene();
 
             } catch (Exception e) {
+                System.out.println(e);
                 alertVoted();
             }
         }
