@@ -146,6 +146,7 @@ public class Statistics {
             document.open();
             Font headerFont = FontFactory.getFont(FontFactory.COURIER_BOLD, 20, BaseColor.BLACK);
             Font summaryFont = FontFactory.getFont(FontFactory.COURIER, 16, BaseColor.BLACK);
+            Font tipFont = FontFactory.getFont(FontFactory.COURIER, 8, BaseColor.DARK_GRAY);
 
             WritableImage img = new WritableImage((int) chart.getWidth(), (int) chart.getHeight());
             SnapshotParameters params = new SnapshotParameters();
@@ -192,18 +193,18 @@ public class Statistics {
 
             PdfPTable voidedVotes = new PdfPTable(2);
 
-            voidedVotes.addCell("Voided votes");
+            voidedVotes.addCell("*Voided votes");
             voidedVotes.addCell(String.valueOf(this.voidedVotes));
             voidedVotes.addCell("Disallowed votes");
             voidedVotes.addCell(String.valueOf(this.disallowedVotes));
 
-            candidateTable.setSpacingAfter(15);
-            partyTable.setSpacingAfter(15);
-            voidedVotes.setSpacingAfter(15);
+            candidateTable.setSpacingAfter(10);
+            partyTable.setSpacingAfter(10);
+            voidedVotes.setSpacingAfter(0);
 
-            candidateTable.setSpacingBefore(15);
-            partyTable.setSpacingBefore(15);
-            voidedVotes.setSpacingBefore(15);
+            candidateTable.setSpacingBefore(10);
+            partyTable.setSpacingBefore(10);
+            voidedVotes.setSpacingBefore(10);
 
             document.add(new Paragraph("Vote summary", headerFont));
             document.add(new Paragraph("candidates summary", summaryFont));
@@ -212,6 +213,8 @@ public class Statistics {
             document.add(partyTable);
             document.add(new Paragraph("voided votes summary", summaryFont));
             document.add(voidedVotes);
+            document.add(new Chunk("*Disallowed votes included in voided votes", tipFont));
+            document.add(Chunk.NEWLINE);
             document.add(image);
             document.close();
 
