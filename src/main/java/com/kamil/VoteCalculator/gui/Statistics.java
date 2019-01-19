@@ -143,16 +143,19 @@ public class Statistics {
 
     @FXML
     private void exportPDF() {
-
         candidateChart.setAnimated(false);
 
         FileChooser fileChooser = new FileChooser();
         fileChooser.setInitialFileName("summary.pdf");
         fileChooser.setTitle("Save summary in pdf");
         File file = fileChooser.showSaveDialog(VoteCalculatorApplication.stage);
+
+        toPDF(file);
+    }
+
+    private void toPDF(File file) {
         if (file != null) {
             try {
-
                 Document document = new Document();
                 PdfWriter.getInstance(document, new FileOutputStream(file));
 
@@ -246,7 +249,6 @@ public class Statistics {
 
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
-
             } catch (DocumentException e) {
                 e.printStackTrace();
             } catch (MalformedURLException e) {
@@ -265,7 +267,10 @@ public class Statistics {
         fileChooser.setInitialFileName("summary.csv");
         fileChooser.setTitle("Export summary to csv");
         File file = fileChooser.showSaveDialog(VoteCalculatorApplication.stage);
+        toCSV(file);
+    }
 
+    private void toCSV(File file) {
         if (file != null) {
             try {
                 FileWriter writer = null;

@@ -1,7 +1,6 @@
 package com.kamil.VoteCalculator.gui;
 
 import com.google.common.hash.Hashing;
-import com.kamil.VoteCalculator.model.Disallowed;
 import com.kamil.VoteCalculator.model.role.Roles;
 import com.kamil.VoteCalculator.model.role.RolesService;
 import com.kamil.VoteCalculator.model.user.User;
@@ -33,8 +32,6 @@ public class RegisterPanel {
     @Autowired
     private UserService userService;
 
-    private Map<String, Roles> roles = null;
-
     @FXML
     private Button registerButton;
     @FXML
@@ -49,6 +46,8 @@ public class RegisterPanel {
     private PasswordField confirmPasswordField;
     @FXML
     private Label peselLog;
+
+    private Map<String, Roles> roles = null;
 
     @FXML
     private void register() {

@@ -4,14 +4,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import javax.validation.Valid;
 import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-
-    @Override
-    <S extends User> S save(@Valid  S entity);
 
     User findUserByPesel(String pesel);
 

@@ -6,13 +6,13 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>2.1.2.RELEASE</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <relativePath/>
     </parent>
     <groupId>com.kamil</groupId>
     <artifactId>VoteCalculator</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>VoteCalculator</name>
-    <description>Demo project for Spring Boot</description>
+    <description>Demo project</description>
     <packaging>jar</packaging>
     <properties>
         <java.version>1.8</java.version>
@@ -35,25 +35,10 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/com.itextpdf/itextpdf -->
         <dependency>
             <groupId>com.itextpdf</groupId>
             <artifactId>itextpdf</artifactId>
             <version>5.0.6</version>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/org.apache.pdfbox/pdfbox -->
-        <dependency>
-            <groupId>org.apache.pdfbox</groupId>
-            <artifactId>pdfbox</artifactId>
-            <version>2.0.13</version>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/org.apache.pdfbox/pdfbox-tools -->
-        <dependency>
-            <groupId>org.apache.pdfbox</groupId>
-            <artifactId>pdfbox-tools</artifactId>
-            <version>2.0.13</version>
         </dependency>
 
         <dependency>
@@ -98,12 +83,6 @@
         </dependency>
 
         <dependency>
-            <groupId>javax.validation</groupId>
-            <artifactId>validation-api</artifactId>
-            <version>2.0.1.Final</version>
-        </dependency>
-
-        <dependency>
             <groupId>com.github.ulisesbocchio</groupId>
             <artifactId>jasypt-spring-boot-starter</artifactId>
             <version>2.1.0</version>
@@ -128,3 +107,4 @@
     </build>
 
 </project>
+

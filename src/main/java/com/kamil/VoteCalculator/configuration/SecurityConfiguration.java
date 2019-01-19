@@ -22,7 +22,7 @@ public class SecurityConfiguration extends GlobalMethodSecurityConfiguration {
         auth.inMemoryAuthentication().and().userDetailsService(userDetailsService).passwordEncoder(new BCryptPasswordEncoder());
     }
 
-    @Bean//(name = "authenticationManager")
+    @Bean
     public AuthenticationManager authenticationManager() throws Exception {
         AuthenticationManager authenticationManager = super.authenticationManager();
         return authenticationManager;

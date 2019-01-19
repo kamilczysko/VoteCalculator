@@ -11,14 +11,13 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import javafx.stage.Stage;
-import javafx.stage.Window;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.core.Authentication;
@@ -26,8 +25,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
 
-import java.applet.AppletContext;
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -35,6 +32,8 @@ import java.util.Set;
 
 @Component
 public class VoteList {
+
+    private final Logger logger = LoggerFactory.getLogger(VoteList.class);
 
     @Autowired
     private CandidateService candidateService;
@@ -54,7 +53,7 @@ public class VoteList {
     private List<Candidate> voted = new ArrayList<Candidate>();
 
     public void initialize() {
-        System.out.println("################ VOTE LIST");
+        logger.info("INIT CANDIDATES");
         loadCandidates();
     }
 
@@ -114,23 +113,19 @@ public class VoteList {
                         candidateService.vote(c, this.voted.size() > 1);
                     }
                 }
-
                 this.voted.clear();
-                Scene statScene = context.getBean("loadStatisticsWindow", Scene.class);
-                Stage stage = (Stage) (((Node) event.getSource()).getScene()).getWindow();
-                stage.getScene().getRoot().prefWidth(1100.0);
-                stage.getScene().getRoot().prefHeight(450.0);
-                stage.setScene(statScene);
-                stage.sizeToScene();
-//                stage.show();
-//                VoteCalculatorApplication.stage.setScene(statScene);
-//                VoteCalculatorApplication.stage.sizeToScene();
-
+                changeScreen();
             } catch (Exception e) {
                 System.out.println(e);
                 alertVoted();
             }
         }
+    }
+
+    private void changeScreen() {
+        Scene statScene = context.getBean("loadStatisticsWindow", Scene.class);
+        VoteCalculatorApplication.stage.setScene(statScene);
+        VoteCalculatorApplication.stage.sizeToScene();
     }
 
     private boolean alert(boolean badVote) {
