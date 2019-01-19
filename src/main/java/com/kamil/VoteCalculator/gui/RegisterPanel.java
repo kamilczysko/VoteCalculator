@@ -27,8 +27,6 @@ public class RegisterPanel {
     private final Logger logger = LoggerFactory.getLogger(RegisterPanel.class);
 
     @Autowired
-    private Disallowed disallowed;
-    @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
     private RolesService rolesService;
@@ -39,22 +37,16 @@ public class RegisterPanel {
 
     @FXML
     private Button registerButton;
-
     @FXML
     private TextField firstNameField;
-
     @FXML
     private TextField secondNameField;
-
     @FXML
     private TextField peselField;
-
     @FXML
     private PasswordField passwordField;
-
     @FXML
     private PasswordField confirmPasswordField;
-
     @FXML
     private Label peselLog;
 

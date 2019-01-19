@@ -3,7 +3,6 @@ package com.kamil.VoteCalculator.gui;
 import com.google.common.hash.Hashing;
 import com.kamil.VoteCalculator.VoteCalculatorApplication;
 import com.kamil.VoteCalculator.model.Disallowed;
-import com.kamil.VoteCalculator.model.candidate.CandidateService;
 import com.kamil.VoteCalculator.model.user.UserService;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
@@ -16,7 +15,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
@@ -27,13 +25,9 @@ public class LoginPanel {
     @Autowired
     ConfigurableApplicationContext context;
     @Autowired
-    PasswordEncoder passwordEncoder;
-    @Autowired
     AuthenticationManager authenticationManager;
     @Autowired
     UserService userService;
-    @Autowired
-    CandidateService candidateService;
     @Autowired
     Disallowed disallowed;
 
@@ -41,7 +35,6 @@ public class LoginPanel {
     PasswordField passwordField;
     @FXML
     TextField peselField;
-
     @FXML
     private void login() {
 
@@ -60,8 +53,8 @@ public class LoginPanel {
         }
 
         UsernamePasswordAuthenticationToken request = new UsernamePasswordAuthenticationToken(peselHash, password);
+
         try {
-//            Authentication ath = authenticationManager.authenticate(request);
             Authentication authResult = authenticationManager.authenticate(request);
             SecurityContextHolder.getContext().setAuthentication(authResult);
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

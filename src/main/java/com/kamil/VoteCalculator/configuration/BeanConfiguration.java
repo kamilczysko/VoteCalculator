@@ -36,7 +36,7 @@ public class BeanConfiguration {
     @Scope("prototype")
     public Disallowed getDisallowed() throws IOException {
 
-        logger.info("REFRESH DISALLOWED");
+        logger.info("REFRESH DISALLOWED LIST");
 
         ResponseEntity<String> response = getDisallowedFromServer();
 

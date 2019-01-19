@@ -27,8 +27,12 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.WritableImage;
 import javafx.stage.FileChooser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
@@ -45,6 +49,8 @@ import java.util.stream.Stream;
 @Component
 public class Statistics {
 
+    private final Logger logger = LoggerFactory.getLogger(Statistics.class);
+
     @Autowired
     private ApplicationContext context;
     @Autowired
@@ -53,39 +59,39 @@ public class Statistics {
     private CandidateService candidateService;
 
     @FXML
-    StackedBarChart<String, Number> candidateChart;
+    private StackedBarChart<String, Number> candidateChart;
     @FXML
-    BarChart<String, Number> partyChart;
+    private BarChart<String, Number> partyChart;
     @FXML
-    TableView summaryTable;
+    private TableView summaryTable;
     @FXML
-    TableColumn<CandidateTable, String> candidateColumn;
+    private TableColumn<CandidateTable, String> candidateColumn;
     @FXML
-    TableColumn<CandidateTable, Integer> voteColumn;
+    private TableColumn<CandidateTable, Integer> voteColumn;
     @FXML
-    TableColumn<CandidateTable, String> partyColumn;
+    private TableColumn<CandidateTable, String> partyColumn;
     @FXML
-    Tab statTab;
+    private Tab statTab;
     @FXML
-    Tab chartTab;
+    private Tab chartTab;
 
     @FXML
-    TableView partyTable;
+    private TableView partyTable;
     @FXML
-    TableColumn partyNamesColumn;
+    private TableColumn partyNamesColumn;
     @FXML
-    TableColumn partyVotesColumn;
-
+    private TableColumn partyVotesColumn;
     @FXML
-    Label voidedVotesLabel;
+    private Label voidedVotesLabel;
     @FXML
-    Label disallowedVotesLabel;
+    private Label disallowedVotesLabel;
 
     private int voidedVotes = 0;
     private int disallowedVotes = 0;
 
-    final ObservableList<CandidateTable> candidatesData = FXCollections.observableArrayList();
-    final ObservableList<PartyTable> partiesData = FXCollections.observableArrayList();
+    private final ObservableList<CandidateTable> candidatesData = FXCollections.observableArrayList();
+    private final ObservableList<PartyTable> partiesData = FXCollections.observableArrayList();
+    private MultiValueMap<String, Candidate> allCandidatesMap;
 
 
     public void initialize() {
@@ -108,28 +114,39 @@ public class Statistics {
         summaryTable.setItems(candidatesData);
         partyTable.setItems(partiesData);
 
-        setVoidedVotes();
-        setDisallowedVotes();
-        getCandidateData();
-        setCandidateChart();
-        setPartyChart();
+        refreshAll();
     }
 
     @FXML
     public void refresh() {
-        setVoidedVotes();
-        setDisallowedVotes();
-        if (statTab.isSelected())
-            getCandidateData();
-        else {
-            setCandidateChart();
-            setPartyChart();
+        refreshAll();
+    }
+
+    @Scheduled(fixedRate = 60000)
+    private void refreshAll() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication != null) {
+            boolean hasVotedRole = authentication.getAuthorities().stream()
+                    .anyMatch(r -> r.getAuthority().equals("ROLE_voted"));
+
+            if (hasVotedRole) {
+                logger.info("REFRESH STATS");
+                setVoidedVotes();
+                setDisallowedVotes();
+                setCandidateData();
+                setCandidateChart();
+                setPartyChart();
+            }
         }
     }
 
     @FXML
     private void logout() {
-//        getStatistics();
+        lo();
+    }
+
+    private void lo() {
         Scene loginWindow = context.getBean("loadLoginWindow", Scene.class);
         VoteCalculatorApplication.stage.setWidth(loginWindow.getWidth());
         VoteCalculatorApplication.stage.setHeight(loginWindow.getHeight());
@@ -264,8 +281,6 @@ public class Statistics {
 
         if (file != null) {
             try {
-
-
                 FileWriter writer = null;
                 writer = new FileWriter(file);
 
@@ -283,15 +298,15 @@ public class Statistics {
         }
     }
 
-    private void getCandidateData() {
-        MultiValueMap<String, Candidate> allCandidates = candidateService.getAllCandidatesToMap();
+    private void setCandidateData() {
+        allCandidatesMap = candidateService.getAllCandidatesToMap();
         List<PartyTable> partiesList = new ArrayList<>();
         List<CandidateTable> candidateList = new ArrayList<>();
 
-        Set<String> strings = allCandidates.keySet();
+        Set<String> strings = allCandidatesMap.keySet();
         for (String key : strings) {
             int partyVotes = 0;
-            List<Candidate> candidates = allCandidates.get(key);
+            List<Candidate> candidates = allCandidatesMap.get(key);
             for (Candidate c : candidates) {
                 partyVotes += c.getVotes();
                 candidateList.add(new CandidateTable(c));
@@ -303,6 +318,21 @@ public class Statistics {
 
         candidatesData.clear();
         candidatesData.addAll(candidateList);
+    }
+
+    private void setCandidateChart() {
+        candidateChart.getData().clear();
+
+        Set<String> strings = allCandidatesMap.keySet();
+        for (String k : strings) {
+            List<Candidate> candidates = allCandidatesMap.get(k);
+            XYChart.Series series1 = new XYChart.Series();
+            series1.setName(k);
+            for (Candidate c : candidates) {
+                series1.getData().add(new XYChart.Data(c.getName(), c.getVotes()));
+            }
+            candidateChart.getData().add(series1);
+        }
     }
 
     private void setVoidedVotes() {
@@ -319,41 +349,19 @@ public class Statistics {
     private void refreshMenu() {
         setVoidedVotes();
         setDisallowedVotes();
-        if (statTab.isSelected())
-            getCandidateData();
-        else {
-            setCandidateChart();
-            setPartyChart();
-        }
+        setCandidateData();
+        setCandidateChart();
+        setPartyChart();
     }
 
     @FXML
     private void logoutMenu() {
-        Scene loginWindow = context.getBean("loadLoginWindow", Scene.class);
-        VoteCalculatorApplication.stage.setScene(loginWindow);
-        VoteCalculatorApplication.stage.sizeToScene();
-        SecurityContextHolder.clearContext();
+        lo();
     }
 
     @FXML
     private void close() {
         System.exit(0);
-    }
-
-    private void setCandidateChart() {
-        candidateChart.getData().clear();
-
-        MultiValueMap<String, Candidate> allCandidates = candidateService.getAllCandidatesToMap();
-        Set<String> strings = allCandidates.keySet();
-        for (String k : strings) {
-            List<Candidate> candidates = allCandidates.get(k);
-            XYChart.Series series1 = new XYChart.Series();
-            series1.setName(k);
-            for (Candidate c : candidates) {
-                series1.getData().add(new XYChart.Data(c.getName(), c.getVotes()));
-            }
-            candidateChart.getData().add(series1);
-        }
     }
 
     private void setPartyChart() {
