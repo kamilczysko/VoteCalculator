@@ -24,6 +24,7 @@ public class VoteCalculatorApplication extends Application {
     private ConfigurableApplicationContext context;
     private Parent root;
     public static Stage stage;
+    public static boolean firstRun = false;
 
     @Autowired
     RestTemplate restTemplate;
@@ -37,6 +38,7 @@ public class VoteCalculatorApplication extends Application {
     public static void main(String[] args) {
         if(args.length > 0) {
             logger.debug("ARGS: [{}]", args[0]);
+            firstRun = true;
         }
         Application.launch(args);
     }
