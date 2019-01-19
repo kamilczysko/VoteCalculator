@@ -3,35 +3,23 @@ package com.kamil.VoteCalculator.model.user;
 import com.kamil.VoteCalculator.model.role.Roles;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
 
 @Entity
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    long id;
-    @NotEmpty
-    @Size(min = 4)
+    private long id;
     @Column(nullable = false)
-    String firstName;
-    @NotEmpty
-    @Size(min = 1)
+    private String firstName;
     @Column(nullable = false)
-    String secondName;
-    @NotEmpty
-    @Size(min = 1)
+    private String secondName;
     @Column(nullable = false, unique = true)
-    String pesel;
-    @NotEmpty
-    @Size(min = 1)
+    private String pesel;
     @Column(nullable = false)
-    String password;
-    @NotEmpty
-    @Size(min = 1)
+    private String password;
     @OneToOne(fetch = FetchType.EAGER)
-    Roles roles;
+    private Roles roles;
 
     boolean blocked = false;
 

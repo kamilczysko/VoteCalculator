@@ -23,18 +23,21 @@ import java.nio.charset.StandardCharsets;
 public class LoginPanel {
 
     @Autowired
-    ConfigurableApplicationContext context;
+    private ConfigurableApplicationContext context;
     @Autowired
-    AuthenticationManager authenticationManager;
+    private AuthenticationManager authenticationManager;
     @Autowired
-    UserService userService;
+    private UserService userService;
     @Autowired
-    Disallowed disallowed;
+    private Disallowed disallowed;
 
     @FXML
     PasswordField passwordField;
     @FXML
     TextField peselField;
+
+//    public static boolean voted = false;
+
     @FXML
     private void login() {
 
@@ -64,7 +67,7 @@ public class LoginPanel {
 
             if (hasVotedRole) {
                 changeToStatScene();
-
+//                voted = true;
             } else {
                 changeToVoteScene();
             }

@@ -45,16 +45,12 @@ public class VoteList {
 
     @FXML
     private VBox voteBox;
-
     @FXML
     private Button voteButton;
-
     @FXML
     private VBox mainBox;
 
     private List<Node> allNodes = new ArrayList<>();
-
-
     private List<Candidate> voted = new ArrayList<Candidate>();
 
     public void initialize() {
@@ -121,7 +117,7 @@ public class VoteList {
 
                 this.voted.clear();
                 Scene statScene = context.getBean("loadStatisticsWindow", Scene.class);
-                Stage stage  = (Stage)(((Node) event.getSource()).getScene()).getWindow();
+                Stage stage = (Stage) (((Node) event.getSource()).getScene()).getWindow();
                 stage.getScene().getRoot().prefWidth(1100.0);
                 stage.getScene().getRoot().prefHeight(450.0);
                 stage.setScene(statScene);

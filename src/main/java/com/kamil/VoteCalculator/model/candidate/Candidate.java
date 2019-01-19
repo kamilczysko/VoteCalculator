@@ -11,17 +11,14 @@ public class Candidate {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JacksonXmlProperty(isAttribute = false)
-    long id;
-
+    private long id;
     @Column(nullable = false)
-    String name;
-
+    private String name;
     @JoinColumn(nullable = false)
     @OneToOne
-    Party party = new Party();
-
+    private Party party = new Party();
     @JacksonXmlProperty(isAttribute = false)
-    int votes = 0;
+    private int votes = 0;
 
     public long getId() {
         return id;

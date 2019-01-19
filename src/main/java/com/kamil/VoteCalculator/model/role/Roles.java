@@ -7,9 +7,9 @@ public class Roles {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int id;
+    private int id;
     @Column(name = "user_role")
-    String userRole;
+    private String userRole;
 
     public int getId() {
         return id;

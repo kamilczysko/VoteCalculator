@@ -31,8 +31,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
@@ -74,7 +72,6 @@ public class Statistics {
     private Tab statTab;
     @FXML
     private Tab chartTab;
-
     @FXML
     private TableView partyTable;
     @FXML
@@ -122,23 +119,13 @@ public class Statistics {
         refreshAll();
     }
 
-    @Scheduled(fixedRate = 60000)
     private void refreshAll() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        if (authentication != null) {
-            boolean hasVotedRole = authentication.getAuthorities().stream()
-                    .anyMatch(r -> r.getAuthority().equals("ROLE_voted"));
-
-            if (hasVotedRole) {
-                logger.info("REFRESH STATS");
-                setVoidedVotes();
-                setDisallowedVotes();
-                setCandidateData();
-                setCandidateChart();
-                setPartyChart();
-            }
-        }
+        logger.info("REFRESH STATS");
+        setVoidedVotes();
+        setDisallowedVotes();
+        setCandidateData();
+        setCandidateChart();
+        setPartyChart();
     }
 
     @FXML
@@ -347,11 +334,7 @@ public class Statistics {
 
     @FXML
     private void refreshMenu() {
-        setVoidedVotes();
-        setDisallowedVotes();
-        setCandidateData();
-        setCandidateChart();
-        setPartyChart();
+        refreshAll();
     }
 
     @FXML

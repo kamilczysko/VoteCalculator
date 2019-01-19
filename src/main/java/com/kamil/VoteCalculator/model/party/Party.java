@@ -9,11 +9,10 @@ public class Party {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    long id;
-
+    private long id;
     @Column(nullable = false, name = "party_name")
     @JacksonXmlProperty(namespace = "party", localName = "party")
-    String partyName;
+    private String partyName;
 
     public long getId() {
         return id;
