@@ -83,16 +83,13 @@ public class VoteList {
                 CheckBox candidateBox = new CheckBox();
                 candidateBox.setText(c.getName());
                 candidateBox.setFont(Font.font("Amble CN", FontWeight.LIGHT, 12));
-                candidateBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                        if (newValue)
-                            voted.add(c);
-                        else
-                            voted.remove(c);
-                        System.out.println(voted);
-                    }
-                });
+                candidateBox.selectedProperty().addListener(
+                        (ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
+                            if (newValue)
+                                voted.add(c);
+                            else
+                                voted.remove(c);
+                        });
 
                 allNodes.add(candidateBox);
                 voteBox.getChildren().add(candidateBox);
@@ -100,8 +97,7 @@ public class VoteList {
         }
     }
 
-    @FXML
-    private void vote(ActionEvent event) {
+    @FXML private void vote(ActionEvent event) {
         boolean badVote = voted.size() != 1;
         if (alert(badVote)) {
             try {
@@ -109,9 +105,9 @@ public class VoteList {
                 long currentPrincipalName = Long.parseLong(authentication.getName());
                 User voted = userService.voted(currentPrincipalName, badVote);
                 if (!badVote && !voted.isDisallowed()) {
-                    for (Candidate c : this.voted) {
-                        candidateService.vote(c, this.voted.size() > 1);
-                    }
+                    this.voted.forEach(c -> {
+                        candidateService.vote(c);
+                    });
                 }
                 this.voted.clear();
                 changeScreen();
